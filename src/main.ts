@@ -68,7 +68,6 @@ app.whenReady().then(async () => {
 // すべてのウィンドウが閉じられたらアプリを終了する
 app.once('window-all-closed', () => app.quit());
 
-// eslint-disable-next-line no-undef
 ipcMain.handle('getDirectoryList', async (event: Electron.IpcMainInvokeEvent, dirPath: string) => {
   // eslint-disable-next-line no-undef
   const returnValue = new Promise<DirectoryData[] | null>((resolve, reject) => {
