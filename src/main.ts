@@ -69,7 +69,7 @@ app.whenReady().then(async () => {
 app.once('window-all-closed', () => app.quit());
 
 ipcMain.handle('getDirectoryList', async (event: Electron.IpcMainInvokeEvent, dirPath: string) => {
-  // eslint-disable-next-line no-undef
+  if(dirPath.length === 0) return null;
   const returnValue = new Promise<DirectoryData[] | null>((resolve, reject) => {
     fs.readdir(dirPath, {withFileTypes: true}, (err: NodeJS.ErrnoException | null, files: Dirent[]) : void => {
       if (err) {
