@@ -84,7 +84,8 @@ ipcMain.handle(
               reject(null);
               return;
             }
-            const returnValue = files.map(async (dir) => {
+            const filesList = files.filter(element => !element.name.startsWith('.'));
+            const returnValue = filesList.map(async (dir) => {
               const ret: DirectoryData = {
                 name: dir.name,
                 isDirectory: dir.isDirectory(),
