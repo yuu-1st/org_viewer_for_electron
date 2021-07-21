@@ -68,24 +68,45 @@ app.whenReady().then(async () => {
 // すべてのウィンドウが閉じられたらアプリを終了する
 app.once('window-all-closed', () => app.quit());
 
-ipcMain.handle('getDirectoryList', async (event: Electron.IpcMainInvokeEvent, dirPath: string) => {
-  if(dirPath.length === 0) return null;
-  const returnValue = new Promise<DirectoryData[] | null>((resolve, reject) => {
-    fs.readdir(dirPath, {withFileTypes: true}, (err: NodeJS.ErrnoException | null, files: Dirent[]) : void => {
-      if (err) {
-        console.log(err);
-        reject(null);
-        return;
-      }
-      resolve(files.map((dir) => {
-        const ret : DirectoryData = {
-          name: dir.name,
-          isDirectory: dir.isDirectory(),
-          extension: dir.isDirectory() ? null : dir.name.split('.').slice(-1)[0],
-        }
-        return ret;
-      }));
-    });
-  });
-  return returnValue;
-});
+ipcMain.handle(
+  'getDirectoryList',
+  async (event: Electron.IpcMainInvokeEvent, dirPath: string, level: number) => {
+    if (dirPath.length === 0) return null;
+    const getLists = async (dirPath: string, level: number): Promise<DirectoryData[] | null> => {
+      if (level <= 0) return null;
+      const returnValue = new Promise<DirectoryData[] | null>((resolve, reject) => {
+        fs.readdir(
+          dirPath,
+          { withFileTypes: true },
+          async (err: NodeJS.ErrnoException | null, files: Dirent[]) => {
+            if (err) {
+              console.log(err);
+              reject(null);
+              return;
+            }
+            const returnValue = files.map(async (dir) => {
+              const ret: DirectoryData = {
+                name: dir.name,
+                isDirectory: dir.isDirectory(),
+                extension: dir.isDirectory() ? null : dir.name.split('.').slice(-1)[0],
+                subDirectory: null,
+              };
+              if (ret.isDirectory) {
+                ret.subDirectory = await getLists(dirPath + '/' + ret.name, level - 1);
+              }
+              return ret;
+            });
+            Promise.all(returnValue).then((value) => {
+              resolve(value);
+            });
+          }
+        );
+      });
+      return returnValue;
+    };
+
+    // 末尾のスラッシュを消す
+    dirPath = dirPath.replace(/\/$/, '');
+    return await getLists(dirPath, level);
+  }
+);
