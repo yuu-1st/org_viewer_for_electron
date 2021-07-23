@@ -1,6 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { DirectoryData } from './@types/connectionDataType';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {
+  Button,
+  ListGroup,
+  ListGroupItem,
+  Form,
+} from 'react-bootstrap';
 
 interface DirectoryShowListElementProps {
   dirLists: DirectoryData[] | null;
@@ -16,7 +23,7 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
     const { dirLists } = this.props;
     if (dirLists === null) return null;
     return (
-      <ul>
+      <ListGroup>
         {dirLists.map((dirList, i) => {
           let needTree = false;
           const colorStyle = {
@@ -29,13 +36,13 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
             colorStyle.color = 'red';
           }
           return (
-            <li key={dirList.name} style={colorStyle}>
+            <ListGroupItem key={dirList.name} style={colorStyle}>
               {dirList.name}
               {needTree && <DirectoryShowListElement dirLists={dirList.subDirectory} />}
-            </li>
+            </ListGroupItem>
           );
         })}
-      </ul>
+      </ListGroup>
     );
   }
 }
@@ -53,12 +60,12 @@ class DirectoryShowSelectForm extends React.Component<DirectoryShowSelectFormPro
     super(props);
   }
 
-  handleDirectoryOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.props.handleDirNameChange(event.target.value);
+  handleDirectoryOnChange = (value : string) => {
+      this.props.handleDirNameChange(value);
   };
 
-  handleLevelOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.props.handleLevelChange(Number(event.target.value));
+  handleLevelOnChange = (value : string) => {
+    this.props.handleLevelChange(Number(value));
   };
 
   handleSubmit = (event: React.FormEvent) => {
@@ -68,29 +75,27 @@ class DirectoryShowSelectForm extends React.Component<DirectoryShowSelectFormPro
 
   render() {
     const { dirName, level } = this.props;
-    const inputStyle = {
-      width: '300px',
-    };
     return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Directory:
-          <input
+      <Form onSubmit={this.handleSubmit}>
+        <Form.Group className="mb-3" controlId="directoryName">
+          <Form.Label>
+            Directory:
+          </Form.Label>
+          <Form.Control
             type="text"
-            style={inputStyle}
             value={dirName}
-            onChange={(e) => this.handleDirectoryOnChange(e)}
+            onChange={(e) => this.handleDirectoryOnChange(e.target.value)}
           />
-        </label>
-        <br />
-        <label>
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="directoryLevel">
+          <Form.Label>
           Directory Level:
-          <input type="number" value={level} onChange={(e) => this.handleLevelOnChange(e)} />
-        </label>
+          </Form.Label>
+          <Form.Control type="number" value={level} onChange={(e) => this.handleLevelOnChange(e.target.value)} />
+        </Form.Group>
+        <Button type="submit">Search</Button>
         <br />
-        <input type="submit" value="Search" />
-        <br />
-      </form>
+      </Form>
     );
   }
 }
