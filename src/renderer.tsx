@@ -2,12 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { DirectoryData } from './@types/connectionDataType';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {
-  Button,
-  ListGroup,
-  ListGroupItem,
-  Form,
-} from 'react-bootstrap';
+import { Button, ListGroup, ListGroupItem, Form } from 'react-bootstrap';
 
 interface DirectoryShowListElementProps {
   dirLists: DirectoryData[] | null;
@@ -60,11 +55,11 @@ class DirectoryShowSelectForm extends React.Component<DirectoryShowSelectFormPro
     super(props);
   }
 
-  handleDirectoryOnChange = (value : string) => {
-      this.props.handleDirNameChange(value);
+  handleDirectoryOnChange = (value: string) => {
+    this.props.handleDirNameChange(value);
   };
 
-  handleLevelOnChange = (value : string) => {
+  handleLevelOnChange = (value: string) => {
     this.props.handleLevelChange(Number(value));
   };
 
@@ -77,22 +72,24 @@ class DirectoryShowSelectForm extends React.Component<DirectoryShowSelectFormPro
     const { dirName, level } = this.props;
     return (
       <Form onSubmit={this.handleSubmit}>
-        <Form.Group className="mb-3" controlId="directoryName">
-          <Form.Label>
-            Directory:
-          </Form.Label>
+        <Form.Floating className="mb-3">
           <Form.Control
+            id="directoryName"
             type="text"
             value={dirName}
             onChange={(e) => this.handleDirectoryOnChange(e.target.value)}
           />
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="directoryLevel">
-          <Form.Label>
-          Directory Level:
-          </Form.Label>
-          <Form.Control type="number" value={level} onChange={(e) => this.handleLevelOnChange(e.target.value)} />
-        </Form.Group>
+          <Form.Label htmlFor="directoryName">Directory:</Form.Label>
+        </Form.Floating>
+        <Form.Floating className="mb-3">
+          <Form.Control
+            type="number"
+            value={level}
+            id="directoryLevel"
+            onChange={(e) => this.handleLevelOnChange(e.target.value)}
+          />
+          <Form.Label htmlFor="directoryLevel">Directory Level:</Form.Label>
+        </Form.Floating>
         <Button type="submit">Search</Button>
         <br />
       </Form>
