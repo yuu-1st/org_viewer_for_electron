@@ -10,9 +10,17 @@ interface DirectoryShowListElementProps {
 
 class DirectoryShowListElement extends React.Component<DirectoryShowListElementProps, {}> {
   constructor(props: DirectoryShowListElementProps) {
-    console.log(props);
     super(props);
   }
+
+  openFile = async (value: string, extension: string|null) => {
+    if(extension === 'org'){
+      const result = await window.api.fileOpenToEmacs(value);
+      if(result !== 'ok'){
+        alert(result);
+      }
+    }
+  };
 
   render() {
     const { dirLists } = this.props;
@@ -31,7 +39,7 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
             colorStyle.color = 'red';
           }
           return (
-            <ListGroupItem key={dirList.name} style={colorStyle}>
+            <ListGroupItem key={dirList.name} style={colorStyle} onClick={(e) => this.openFile(dirList.rootPath, dirList.extension)}>
               {dirList.name}
               {needTree && <DirectoryShowListElement dirLists={dirList.subDirectory} />}
             </ListGroupItem>
@@ -106,12 +114,19 @@ interface DirectoryShowDivState {
 class DirectoryShowDiv extends React.Component<{}, DirectoryShowDivState> {
   constructor(props: {}) {
     super(props);
+    this.setDefaultData();
     this.state = {
       dirName: '',
       level: 1,
       dirLists: null,
     };
   }
+
+  setDefaultData = async () => {
+    const data = await window.api.getDefaultData();
+    this.setState({ dirName : data.HomeDir });
+    this.handleFormSubmit();
+  };
 
   handleDirNameChange = (dirName: string) => {
     this.setState({ dirName });

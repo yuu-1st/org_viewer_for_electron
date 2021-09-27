@@ -3,4 +3,5 @@ export interface DirectoryData{
     isDirectory: boolean,
     extension: string|null,
     subDirectory: DirectoryData[] | null,
+    rootPath: string,
 }

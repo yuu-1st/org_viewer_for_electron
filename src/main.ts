@@ -1,8 +1,9 @@
 import os from 'os';
-import path from 'path';
+import path, { resolve } from 'path';
 import { app, BrowserWindow, ipcMain, session } from 'electron';
 import fs, { Dirent } from 'fs';
 import { DirectoryData } from './@types/connectionDataType';
+import { exec } from 'child_process';
 
 const extPath =
   os.platform() === 'darwin'
@@ -68,6 +69,20 @@ app.whenReady().then(async () => {
 // すべてのウィンドウが閉じられたらアプリを終了する
 app.once('window-all-closed', () => app.quit());
 
+
+ipcMain.handle(
+  'getDefaultData',
+  async (event: Electron.IpcMainInvokeEvent) => {
+    let HomeDir = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"];
+    if(fs.existsSync(HomeDir + "/.my_help")){
+      HomeDir += "/.my_help";
+    }
+    return {
+      HomeDir,
+    };
+  }
+);
+
 ipcMain.handle(
   'getDirectoryList',
   async (event: Electron.IpcMainInvokeEvent, dirPath: string, level: number) => {
@@ -91,6 +106,7 @@ ipcMain.handle(
                 isDirectory: dir.isDirectory(),
                 extension: dir.isDirectory() ? null : dir.name.split('.').slice(-1)[0],
                 subDirectory: null,
+                rootPath: path.resolve(dirPath + '/' + dir.name),
               };
               if (ret.isDirectory) {
                 ret.subDirectory = await getLists(dirPath + '/' + ret.name, level - 1);
@@ -109,5 +125,26 @@ ipcMain.handle(
     // 末尾のスラッシュを消す
     dirPath = dirPath.replace(/\/$/, '');
     return await getLists(dirPath, level);
+  }
+);
+
+ipcMain.handle(
+  'fileOpenToEmacs',
+  async (event: Electron.IpcMainInvokeEvent, dirPath: string) => {
+    let result : string = "";
+    result = await new Promise((resolve, reject) => {
+      if(fs.existsSync(dirPath)){
+        exec('/Applications/Emacs.app/Contents/MacOS/Emacs ' + dirPath, (err, stdout, stderr) => {
+          if (err) {
+            reject(`エラー: ${stderr}`);
+          }else{
+            resolve("ok");
+          }
+        });
+      }else{
+        reject("エラー：ファイルがありません。");
+      }
+    });
+    return result;
   }
 );
