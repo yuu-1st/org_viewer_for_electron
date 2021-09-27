@@ -69,7 +69,9 @@ app.whenReady().then(async () => {
 // すべてのウィンドウが閉じられたらアプリを終了する
 app.once('window-all-closed', () => app.quit());
 
-
+/**
+ * デフォルト値となるデータを作成する
+ */
 ipcMain.handle(
   'getDefaultData',
   async (event: Electron.IpcMainInvokeEvent) => {
@@ -83,6 +85,9 @@ ipcMain.handle(
   }
 );
 
+/**
+ * ディレクトリ表示
+ */
 ipcMain.handle(
   'getDirectoryList',
   async (event: Electron.IpcMainInvokeEvent, dirPath: string, level: number) => {
@@ -128,6 +133,9 @@ ipcMain.handle(
   }
 );
 
+/**
+ * ファイルをGUI Emacsで表示します。
+ */
 ipcMain.handle(
   'fileOpenToEmacs',
   async (event: Electron.IpcMainInvokeEvent, dirPath: string) => {
