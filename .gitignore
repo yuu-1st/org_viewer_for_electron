@@ -125,3 +125,4 @@ Thumbs.db
 *.code-workspace
 
 /memo
+/build_dist
