@@ -7,6 +7,7 @@ import { Button, ListGroup, ListGroupItem, Form } from 'react-bootstrap';
 interface DirectoryShowListElementProps {
   /** 表示するデータ情報 */
   dirLists: DirectoryData[] | null;
+  handleClickDirectory: (dirName: string) => void;
 }
 
 /**
@@ -23,17 +24,19 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
    * @param value 表示するパス
    * @param extension 拡張子
    */
-  openFile = async (value: string, extension: string|null) => {
-    if(extension === 'org'){
+  openFile = async (value: string, extension: string | null) => {
+    if (extension === 'org') {
       const result = await window.api.fileOpenToEmacs(value);
-      if(result !== 'ok'){
+      if (result !== 'ok') {
         alert(result);
       }
+    }else if(extension === '/dir'){
+      this.props.handleClickDirectory(value);
     }
   };
 
   render() {
-    const { dirLists } = this.props;
+    const { dirLists, handleClickDirectory } = this.props;
     if (dirLists === null) return null;
     return (
       <ListGroup>
@@ -49,9 +52,21 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
             colorStyle.color = 'red';
           }
           return (
-            <ListGroupItem key={dirList.name} style={colorStyle} onClick={(e) => this.openFile(dirList.rootPath, dirList.extension)}>
+            <ListGroupItem
+              key={dirList.name}
+              style={colorStyle}
+              onClick={(e) => this.openFile(dirList.rootPath, dirList.extension)}
+            >
               {dirList.name}
-              {needTree && <DirectoryShowListElement dirLists={dirList.subDirectory} /> /* ディレクトリであれば再帰的に表示する */}
+              {
+                /* ディレクトリであれば再帰的に表示する */
+                needTree && (
+                  <DirectoryShowListElement
+                    dirLists={dirList.subDirectory}
+                    handleClickDirectory={handleClickDirectory}
+                  />
+                )
+              }
             </ListGroupItem>
           );
         })}
@@ -162,7 +177,7 @@ class DirectoryShowDiv extends React.Component<{}, DirectoryShowDivState> {
    */
   setDefaultData = async () => {
     const data = await window.api.getDefaultData();
-    this.setState({ dirName : data.HomeDir });
+    this.setState({ dirName: data.HomeDir });
     this.handleFormSubmit();
   };
 
@@ -184,11 +199,25 @@ class DirectoryShowDiv extends React.Component<{}, DirectoryShowDivState> {
 
   /**
    * ステートにセットされた値から、表示するディレクトリおよび階層数を更新し、描画します。
+   * @param dirNameLatest stateに頼らずに表示を更新する場合にのみ指定する。
    */
-  handleFormSubmit = async () => {
-    const { dirName, level } = this.state;
+  handleFormSubmit = async (dirNameLatest : string|null = null) => {
+    let { dirName, level } = this.state;
+    if(dirNameLatest){
+      // setStateがリアルタイムで反映されないため、関数を再利用するために引数でリアルタイム値を取得する
+      dirName = dirNameLatest;
+    }
     const dirLists: DirectoryData[] | null = await window.api.getDirectoryList(dirName, level);
     this.setState({ dirLists });
+  };
+
+  /**
+   * リストに表示したディレクトリをクリックされた時に、表示するディレクトリ名およびリストを更新します。
+   * @param dirName 表示先のディレクトリ名
+   */
+  handleClickDirectory = (dirName: string) => {
+    this.handleDirNameChange(dirName);
+    this.handleFormSubmit(dirName);
   };
 
   render() {
@@ -202,7 +231,10 @@ class DirectoryShowDiv extends React.Component<{}, DirectoryShowDivState> {
           handleLevelChange={this.handleLevelChange}
           handleFormSubmit={this.handleFormSubmit}
         />
-        <DirectoryShowListElement dirLists={dirLists} />
+        <DirectoryShowListElement
+          dirLists={dirLists}
+          handleClickDirectory={this.handleClickDirectory}
+        />
       </div>
     );
   }

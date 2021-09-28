@@ -109,7 +109,7 @@ ipcMain.handle(
               const ret: DirectoryData = {
                 name: dir.name,
                 isDirectory: dir.isDirectory(),
-                extension: dir.isDirectory() ? null : dir.name.split('.').slice(-1)[0],
+                extension: dir.isDirectory() ? "/dir" : dir.name.split('.').slice(-1)[0], // 拡張子にスラッシュは入らないと判断
                 subDirectory: null,
                 rootPath: path.resolve(dirPath + '/' + dir.name),
               };
