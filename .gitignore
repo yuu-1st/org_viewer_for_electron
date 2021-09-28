@@ -123,3 +123,5 @@ dist
 .DS_Store
 Thumbs.db
 *.code-workspace
+
+/memo
