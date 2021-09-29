@@ -1,7 +1,7 @@
 {
   "name": "org_viewer_for_electron",
   "version": "0.1.0",
-  "description": "use org mode for GUI",
+  "description": "use org_mode for GUI",
   "main": "dist/main.js",
   "scripts": {
     "start": "run-s clean build serve",
