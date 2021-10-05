@@ -72,18 +72,15 @@ app.once('window-all-closed', () => app.quit());
 /**
  * デフォルト値となるデータを作成する
  */
-ipcMain.handle(
-  'getDefaultData',
-  async (event: Electron.IpcMainInvokeEvent) => {
-    let HomeDir = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"];
-    if(fs.existsSync(HomeDir + "/.my_help")){
-      HomeDir += "/.my_help";
-    }
-    return {
-      HomeDir,
-    };
+ipcMain.handle('getDefaultData', async (event: Electron.IpcMainInvokeEvent) => {
+  let HomeDir = process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'];
+  if (fs.existsSync(HomeDir + '/.my_help')) {
+    HomeDir += '/.my_help';
   }
-);
+  return {
+    HomeDir,
+  };
+});
 
 /**
  * ディレクトリ表示
@@ -104,12 +101,12 @@ ipcMain.handle(
               reject(null);
               return;
             }
-            const filesList = files.filter(element => !element.name.startsWith('.'));
+            const filesList = files.filter((element) => !element.name.startsWith('.'));
             const returnValue = filesList.map(async (dir) => {
               const ret: DirectoryData = {
                 name: dir.name,
                 isDirectory: dir.isDirectory(),
-                extension: dir.isDirectory() ? "/dir" : dir.name.split('.').slice(-1)[0], // 拡張子にスラッシュは入らないと判断
+                extension: dir.isDirectory() ? '/dir' : dir.name.split('.').slice(-1)[0], // 拡張子にスラッシュは入らないと判断
                 subDirectory: null,
                 rootPath: path.resolve(dirPath + '/' + dir.name),
               };
@@ -136,23 +133,20 @@ ipcMain.handle(
 /**
  * ファイルをGUI Emacsで表示します。
  */
-ipcMain.handle(
-  'fileOpenToEmacs',
-  async (event: Electron.IpcMainInvokeEvent, dirPath: string) => {
-    let result : string = "";
-    result = await new Promise((resolve, reject) => {
-      if(fs.existsSync(dirPath)){
-        exec('/Applications/Emacs.app/Contents/MacOS/Emacs ' + dirPath, (err, stdout, stderr) => {
-          if (err) {
-            reject(`エラー: ${stderr}`);
-          }else{
-            resolve("ok");
-          }
-        });
-      }else{
-        reject("エラー：ファイルがありません。");
-      }
-    });
-    return result;
-  }
-);
+ipcMain.handle('fileOpenToEmacs', async (event: Electron.IpcMainInvokeEvent, dirPath: string) => {
+  let result: string = '';
+  result = await new Promise((resolve, reject) => {
+    if (fs.existsSync(dirPath)) {
+      exec('/Applications/Emacs.app/Contents/MacOS/Emacs ' + dirPath, (err, stdout, stderr) => {
+        if (err) {
+          reject(`エラー: ${stderr}`);
+        } else {
+          resolve('ok');
+        }
+      });
+    } else {
+      reject('エラー：ファイルがありません。');
+    }
+  });
+  return result;
+});

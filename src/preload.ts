@@ -13,21 +13,13 @@ export async function getDirectoryList(
   return DirList;
 }
 
-export async function fileOpenToEmacs(
-  dirName: string,
-): Promise<string|null>{
-  const Message: string | null = await ipcRenderer.invoke(
-    'fileOpenToEmacs',
-    dirName,
-  );
+export async function fileOpenToEmacs(dirName: string): Promise<string | null> {
+  const Message: string | null = await ipcRenderer.invoke('fileOpenToEmacs', dirName);
   return Message;
 }
 
-export async function getDefaultData(
-): Promise<{'HomeDir' : string}>{
-  const Message: {'HomeDir' : string} = await ipcRenderer.invoke(
-    'getDefaultData',
-  );
+export async function getDefaultData(): Promise<{ HomeDir: string }> {
+  const Message: { HomeDir: string } = await ipcRenderer.invoke('getDefaultData');
   return Message;
 }
 

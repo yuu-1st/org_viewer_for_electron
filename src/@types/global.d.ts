@@ -2,8 +2,8 @@
 // https://dev.classmethod.jp/articles/typings-of-window-object/
 import { fileOpenToEmacs, getDefaultData, getDirectoryList } from '../preload';
 
-export default interface Api{
-  getDirectoryList : typeof getDirectoryList;
+export default interface Api {
+  getDirectoryList: typeof getDirectoryList;
   fileOpenToEmacs: typeof fileOpenToEmacs;
   getDefaultData: typeof getDefaultData;
 }

@@ -30,7 +30,7 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
       if (result !== 'ok') {
         alert(result);
       }
-    }else if(extension === '/dir'){
+    } else if (extension === '/dir') {
       this.props.handleClickDirectory(value);
     }
   };
@@ -201,9 +201,9 @@ class DirectoryShowDiv extends React.Component<{}, DirectoryShowDivState> {
    * ステートにセットされた値から、表示するディレクトリおよび階層数を更新し、描画します。
    * @param dirNameLatest stateに頼らずに表示を更新する場合にのみ指定する。
    */
-  handleFormSubmit = async (dirNameLatest : string|null = null) => {
+  handleFormSubmit = async (dirNameLatest: string | null = null) => {
     let { dirName, level } = this.state;
-    if(dirNameLatest){
+    if (dirNameLatest) {
       // setStateがリアルタイムで反映されないため、関数を再利用するために引数でリアルタイム値を取得する
       dirName = dirNameLatest;
     }
