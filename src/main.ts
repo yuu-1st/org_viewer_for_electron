@@ -2,7 +2,7 @@ import os from 'os';
 import path, { resolve } from 'path';
 import { app, BrowserWindow, ipcMain, session } from 'electron';
 import fs, { Dirent } from 'fs';
-import { DirectoryData } from './@types/connectionDataType';
+import { ApiResultData, DirectoryData } from './@types/connectionDataType';
 import { exec } from 'child_process';
 
 const extPath =
@@ -150,3 +150,46 @@ ipcMain.handle('fileOpenToEmacs', async (event: Electron.IpcMainInvokeEvent, dir
   });
   return result;
 });
+
+/**
+ * ファイルをHTMLに変換し、それを返します。
+ */
+ipcMain.handle(
+  'fileChangeFromOrgToHTML',
+  async (event: Electron.IpcMainInvokeEvent, dirPath: string) => {
+    let result: ApiResultData;
+    result = await new Promise((resolve, reject) => {
+      if (fs.existsSync(dirPath) && dirPath.split('.').slice(-1)[0] === 'org') {
+        exec('/usr/local/bin/pandoc -f org -t html ' + dirPath, (err, stdout, stderr) => {
+          if (err) {
+            resolve({ result: 'error', data: stderr });
+          } else {
+
+            resolve({ result: 'success', data: stdout});
+          }
+        });
+      } else {
+        reject('エラー：ファイルがありません。');
+      }
+    });
+    return result;
+  }
+);
+
+/**
+ * 相対パスを絶対パスに修正します。
+ */
+ipcMain.handle(
+  'pathChangeFromRelativeToAbsolute',
+  (event: Electron.IpcMainInvokeEvent, changePath: string, originalPath: string) : string => {
+    let result = changePath;
+    if(/^(https?:\/\/|file:)/.test(changePath)){
+      // 要素がhttpもしくはhttpsから始まるとき
+    }else if(path.isAbsolute(changePath)){
+      // 要素が絶対パスで書かれている時
+    }else {
+      result = path.resolve(path.dirname(originalPath),changePath);
+    }
+    return result;
+  }
+);

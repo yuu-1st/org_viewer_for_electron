@@ -1,11 +1,13 @@
 // https://zenn.dev/sprout2000/articles/7d2644bb4e198e
 // https://dev.classmethod.jp/articles/typings-of-window-object/
-import { fileOpenToEmacs, getDefaultData, getDirectoryList } from '../preload';
+import { fileChangeFromOrgToHTML, fileOpenToEmacs, getDefaultData, getDirectoryList, pathChangeFromRelativeToAbsolute } from '../preload';
 
 export default interface Api {
   getDirectoryList: typeof getDirectoryList;
   fileOpenToEmacs: typeof fileOpenToEmacs;
   getDefaultData: typeof getDefaultData;
+  fileChangeFromOrgToHTML: typeof fileChangeFromOrgToHTML;
+  pathChangeFromRelativeToAbsolute: typeof pathChangeFromRelativeToAbsolute;
 }
 
 // global の名前空間にある定義を上書き

@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { DirectoryData } from './@types/connectionDataType';
+import { ApiResultData, DirectoryData } from './@types/connectionDataType';
 
 export async function getDirectoryList(
   dirName: string,
@@ -23,8 +23,20 @@ export async function getDefaultData(): Promise<{ HomeDir: string }> {
   return Message;
 }
 
+export async function fileChangeFromOrgToHTML(dirName: string): Promise<ApiResultData> {
+  const Message: ApiResultData = await ipcRenderer.invoke('fileChangeFromOrgToHTML', dirName);
+  return Message;
+}
+
+export async function pathChangeFromRelativeToAbsolute(changePath: string, originalPath: string): Promise<string> {
+  const Message: string = await ipcRenderer.invoke('pathChangeFromRelativeToAbsolute', changePath, originalPath);
+  return Message;
+}
+
 contextBridge.exposeInMainWorld('api', {
   getDirectoryList: getDirectoryList,
   fileOpenToEmacs: fileOpenToEmacs,
   getDefaultData: getDefaultData,
+  fileChangeFromOrgToHTML: fileChangeFromOrgToHTML,
+  pathChangeFromRelativeToAbsolute: pathChangeFromRelativeToAbsolute,
 });

@@ -2,11 +2,13 @@ import React from 'react';
 import { DirectoryData } from './../@types/connectionDataType';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, ListGroup, ListGroupItem, Form } from 'react-bootstrap';
+import { BookOpen, Edit } from 'react-feather';
 
 interface DirectoryShowListElementProps {
   /** 表示するデータ情報 */
   dirLists: DirectoryData[] | null;
   handleClickDirectory: (dirName: string) => void;
+  changeDivToHtml : (html : string, dirName: string) => void;
 }
 
 /**
@@ -29,13 +31,25 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
       if (result !== 'ok') {
         alert(result);
       }
-    } else if (extension === '/dir') {
-      this.props.handleClickDirectory(value);
     }
   };
 
+  openView = async (dirName: string, extension: string | null) => {
+    if (extension === 'org') {
+      const result = await window.api.fileChangeFromOrgToHTML(dirName);
+      if(result.result === 'success'){
+        this.props.changeDivToHtml(result.data, dirName);
+      }
+    } else if (extension === '/dir') {
+      this.props.handleClickDirectory(dirName);
+    }
+  }
+
   render() {
-    const { dirLists, handleClickDirectory } = this.props;
+    const { dirLists, handleClickDirectory, changeDivToHtml } = this.props;
+    const paddingLeft : React.CSSProperties = {
+      marginLeft: 30,
+    }
     if (dirLists === null) return null;
     return (
       <ListGroup>
@@ -54,15 +68,28 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
             <ListGroupItem
               key={dirList.name}
               style={colorStyle}
-              onClick={(e) => this.openFile(dirList.rootPath, dirList.extension)}
             >
               {dirList.name}
+              {
+                /** orgファイルであれば編集ボタンを表示する */
+                dirList.extension === 'org' && (<Edit style={paddingLeft}
+                onClick={(e) => this.openFile(dirList.rootPath, dirList.extension)}
+                />)
+              }
+              {
+                /** orgファイルかディレクトリであれば開くボタンを表示する */
+                (dirList.extension === 'org' || needTree) &&
+                (<BookOpen style={paddingLeft}
+                onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
+                />)
+              }
               {
                 /* ディレクトリであれば再帰的に表示する */
                 needTree && (
                   <DirectoryShowListElement
                     dirLists={dirList.subDirectory}
                     handleClickDirectory={handleClickDirectory}
+                    changeDivToHtml={changeDivToHtml}
                   />
                 )
               }
@@ -153,15 +180,19 @@ interface DirectoryShowDivState {
   dirLists: DirectoryData[] | null;
 }
 
+interface DirectoryShowDivProps {
+  changeDivToHtml : (html : string, dirName: string) => void;
+}
+
 /**
  * ベースとなる要素を扱うクラス
  */
-export class DirectoryShowDiv extends React.Component<{}, DirectoryShowDivState> {
+export class DirectoryShowDiv extends React.Component<DirectoryShowDivProps, DirectoryShowDivState> {
   /**
    * コンストラクタ。メインプロセスからデフォルトデータを取得します。
    * @param props
    */
-  constructor(props: {}) {
+  constructor(props: DirectoryShowDivProps) {
     super(props);
     this.setDefaultData();
     this.state = {
@@ -221,6 +252,7 @@ export class DirectoryShowDiv extends React.Component<{}, DirectoryShowDivState>
 
   render() {
     const { dirName, level, dirLists } = this.state;
+    const { changeDivToHtml } = this.props;
     return (
       <div>
         <DirectoryShowSelectForm
@@ -233,6 +265,7 @@ export class DirectoryShowDiv extends React.Component<{}, DirectoryShowDivState>
         <DirectoryShowListElement
           dirLists={dirLists}
           handleClickDirectory={this.handleClickDirectory}
+          changeDivToHtml={changeDivToHtml}
         />
       </div>
     );

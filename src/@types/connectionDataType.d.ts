@@ -5,3 +5,8 @@ export interface DirectoryData {
   subDirectory: DirectoryData[] | null;
   rootPath: string;
 }
+
+export interface ApiResultData {
+    result : 'success' | 'error';
+    data : string;
+}
