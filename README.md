@@ -8,11 +8,11 @@ my_helpをGUIで操作するアプリケーション
 
 ## edit
 
-- 編集したいorgファイルをクリックすると、GUI版のEmacsが起動し、編集できます。
+- 編集したいorgファイルの編集ボタンを選択すると、GUI版のEmacsが起動し、編集できます。
 
 ## show
 
-- 未対応
+- 表示したいorgファイルの表示ボタンを選択すると、開きます。
 
 # Settings
 
@@ -33,6 +33,12 @@ my_helpをGUIで操作するアプリケーション
 
 - `% gem install my_help` を実行します。
 
+### Pandocのインストール
+
+- 注：homebrewがインストールされている必要があります。
+
+- `% brew install pandoc` を実行します。
+
 ## use windows
 
 - 現在、windows版には対応していません。
@@ -50,6 +56,18 @@ my_helpをGUIで操作するアプリケーション
 「使用がブロックされました」の右にある「このまま開く」を押し、実行許可を出す必要があります。
 
 # Versions
+
+## v0.2.0
+
+- add features
+  - Added for open org-mode in Application.
+
+- add for settings
+  - Pandoc is needed.
+
+- known issue
+  - HTML tag "a" does not work.
+  - Even if there is an error, the error is not displayed.
 
 ## v0.1.0
 
