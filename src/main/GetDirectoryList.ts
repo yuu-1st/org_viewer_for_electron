@@ -15,6 +15,7 @@ export const GetDirectoryList = async (
   level: number
 ): Promise<DirectoryData[] | null> => {
   if (dirPath.length === 0) return null;
+  if (!fs.existsSync(dirPath)) return null;
   // 末尾のスラッシュを消す
   dirPath = dirPath.replace(/\/$/, '');
   return await getLists(dirPath, level);

@@ -3,6 +3,7 @@ import { DirectoryData } from './../@types/connectionDataType';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, ListGroup, ListGroupItem, Form } from 'react-bootstrap';
 import { BookOpen, Edit } from 'react-feather';
+import { DeletePopup, ShowPopup, ShowTemporaryPopup } from './popup';
 
 interface DirectoryShowListElementProps {
   /** 表示するデータ情報 */
@@ -27,18 +28,24 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
    */
   openFile = async (value: string, extension: string | null) => {
     if (extension === 'org') {
+      const popId = ShowTemporaryPopup("実行中…","emacsを起動しています。", "default");
       const result = await window.api.fileOpenToEmacs(value);
+      DeletePopup(popId); // 非表示にする。
       if (result !== 'ok') {
-        alert(result);
+        ShowPopup("Emacsを起動できませんでした。", (result?? " "), "danger");
       }
     }
   };
 
   openView = async (dirName: string, extension: string | null) => {
     if (extension === 'org') {
+      const popId = ShowTemporaryPopup("実行中…","orgファイルを開いています。", "default");
       const result = await window.api.fileChangeFromOrgToHTML(dirName);
+      DeletePopup(popId); // 非表示にする。
       if(result.result === 'success'){
         this.props.changeDivToHtml(result.data, dirName);
+      }else{
+        ShowPopup("orgファイルを開けませんでした。",result.data, "danger");
       }
     } else if (extension === '/dir') {
       this.props.handleClickDirectory(dirName);
@@ -238,6 +245,10 @@ export class DirectoryShowDiv extends React.Component<DirectoryShowDivProps, Dir
       dirName = dirNameLatest;
     }
     const dirLists: DirectoryData[] | null = await window.api.getDirectoryList(dirName, level);
+    console.log(dirLists);
+    if(dirLists === null){
+      ShowPopup("表示するディレクトリが存在しませんでした。", " ", "danger");
+    }
     this.setState({ dirLists });
   };
 
