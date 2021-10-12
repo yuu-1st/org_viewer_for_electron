@@ -11,7 +11,7 @@
     "product_build": "cross-env NODE_ENV=\"production\" webpack --progress --mode=production",
     "product_package_mac": "electron-builder --mac --x64",
     "product_clean": "rimraf build_dist",
-    "packaged_for_mac": "run-s product_clean product_build product_package_mac"
+    "packaged_for_mac": "run-s clean product_clean product_build product_package_mac"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
     "@types/node": "^16.10.3",
     "@types/react": "^17.0.27",
     "@types/react-dom": "^17.0.9",
+    "@types/react-notifications-component": "^3.1.1",
     "cross-env": "^7.0.3",
     "css-loader": "^6.4.0",
     "electron": "^15.1.2",
@@ -36,11 +37,13 @@
     "webpack-cli": "^4.9.0"
   },
   "dependencies": {
+    "animate.css": "^4.1.1",
     "bootstrap": "^5.1.3",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.0-rc.0",
     "react-dom": "^17.0.2",
-    "react-feather": "^2.0.9"
+    "react-feather": "^2.0.9",
+    "react-notifications-component": "^3.1.0"
   },
   "build": {
     "appId": "com.yuu_1st.org_viewer_for_electron",
