@@ -1,9 +1,11 @@
 import os from 'os';
-import path, { resolve } from 'path';
+import path from 'path';
 import { app, BrowserWindow, ipcMain, session } from 'electron';
-import fs, { Dirent } from 'fs';
-import { ApiResultData, DirectoryData } from './@types/connectionDataType';
-import { exec } from 'child_process';
+import { GetDirectoryList } from './main/GetDirectoryList';
+import { FileOpenToEmacs } from './main/FileOpenToEmacs';
+import { FileChangeFromOrgToHTML } from './main/FileChangeFromOrgToHTML';
+import { PathChangeFromRelativeToAbsolute } from './main/PathChangeFromRelativeToAbsolute';
+import { GetDefaultData } from './main/GetDefaultData';
 
 const extPath =
   os.platform() === 'darwin'
@@ -69,127 +71,31 @@ app.whenReady().then(async () => {
 // すべてのウィンドウが閉じられたらアプリを終了する
 app.once('window-all-closed', () => app.quit());
 
+//******************************************************
+// レンダープロセスと通信するイベント群
+//******************************************************
+
 /**
  * デフォルト値となるデータを作成する
  */
-ipcMain.handle('getDefaultData', async (event: Electron.IpcMainInvokeEvent) => {
-  let HomeDir = process.env[process.platform == 'win32' ? 'USERPROFILE' : 'HOME'];
-  if (fs.existsSync(HomeDir + '/.my_help')) {
-    HomeDir += '/.my_help';
-  }
-  return {
-    HomeDir,
-  };
-});
+ipcMain.handle('getDefaultData', GetDefaultData);
 
 /**
  * ディレクトリ表示
  */
-ipcMain.handle(
-  'getDirectoryList',
-  async (event: Electron.IpcMainInvokeEvent, dirPath: string, level: number) => {
-    if (dirPath.length === 0) return null;
-    const getLists = async (dirPath: string, level: number): Promise<DirectoryData[] | null> => {
-      if (level <= 0) return null;
-      const returnValue = new Promise<DirectoryData[] | null>((resolve, reject) => {
-        fs.readdir(
-          dirPath,
-          { withFileTypes: true },
-          async (err: NodeJS.ErrnoException | null, files: Dirent[]) => {
-            if (err) {
-              console.log(err);
-              reject(null);
-              return;
-            }
-            const filesList = files.filter((element) => !element.name.startsWith('.'));
-            const returnValue = filesList.map(async (dir) => {
-              const ret: DirectoryData = {
-                name: dir.name,
-                isDirectory: dir.isDirectory(),
-                extension: dir.isDirectory() ? '/dir' : dir.name.split('.').slice(-1)[0], // 拡張子にスラッシュは入らないと判断
-                subDirectory: null,
-                rootPath: path.resolve(dirPath + '/' + dir.name),
-              };
-              if (ret.isDirectory) {
-                ret.subDirectory = await getLists(dirPath + '/' + ret.name, level - 1);
-              }
-              return ret;
-            });
-            Promise.all(returnValue).then((value) => {
-              resolve(value);
-            });
-          }
-        );
-      });
-      return returnValue;
-    };
-
-    // 末尾のスラッシュを消す
-    dirPath = dirPath.replace(/\/$/, '');
-    return await getLists(dirPath, level);
-  }
-);
+ipcMain.handle('getDirectoryList', GetDirectoryList);
 
 /**
  * ファイルをGUI Emacsで表示します。
  */
-ipcMain.handle('fileOpenToEmacs', async (event: Electron.IpcMainInvokeEvent, dirPath: string) => {
-  let result: string = '';
-  result = await new Promise((resolve, reject) => {
-    if (fs.existsSync(dirPath)) {
-      exec('/Applications/Emacs.app/Contents/MacOS/Emacs ' + dirPath, (err, stdout, stderr) => {
-        if (err) {
-          reject(`エラー: ${stderr}`);
-        } else {
-          resolve('ok');
-        }
-      });
-    } else {
-      reject('エラー：ファイルがありません。');
-    }
-  });
-  return result;
-});
+ipcMain.handle('fileOpenToEmacs', FileOpenToEmacs);
 
 /**
  * ファイルをHTMLに変換し、それを返します。
  */
-ipcMain.handle(
-  'fileChangeFromOrgToHTML',
-  async (event: Electron.IpcMainInvokeEvent, dirPath: string) => {
-    let result: ApiResultData;
-    result = await new Promise((resolve, reject) => {
-      if (fs.existsSync(dirPath) && dirPath.split('.').slice(-1)[0] === 'org') {
-        exec('/usr/local/bin/pandoc -f org -t html ' + dirPath, (err, stdout, stderr) => {
-          if (err) {
-            resolve({ result: 'error', data: stderr });
-          } else {
-
-            resolve({ result: 'success', data: stdout});
-          }
-        });
-      } else {
-        reject('エラー：ファイルがありません。');
-      }
-    });
-    return result;
-  }
-);
+ipcMain.handle('fileChangeFromOrgToHTML', FileChangeFromOrgToHTML);
 
 /**
  * 相対パスを絶対パスに修正します。
  */
-ipcMain.handle(
-  'pathChangeFromRelativeToAbsolute',
-  (event: Electron.IpcMainInvokeEvent, changePath: string, originalPath: string) : string => {
-    let result = changePath;
-    if(/^(https?:\/\/|file:)/.test(changePath)){
-      // 要素がhttpもしくはhttpsから始まるとき
-    }else if(path.isAbsolute(changePath)){
-      // 要素が絶対パスで書かれている時
-    }else {
-      result = path.resolve(path.dirname(originalPath),changePath);
-    }
-    return result;
-  }
-);
+ipcMain.handle('pathChangeFromRelativeToAbsolute', PathChangeFromRelativeToAbsolute);
