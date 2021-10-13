@@ -1,0 +1,16 @@
+img {
+  width: 100%;
+}
+
+#htmlShow_body {
+  overflow-x: scroll;
+  overflow-y: scroll;
+  height: calc(100vh - 0.5rem);
+}
+
+#htmlShow_tableOfContents {
+  overflow-x: scroll;
+  overflow-y: scroll;
+  height: calc(100vh - 0.5rem);
+  min-width: 20%;
+}

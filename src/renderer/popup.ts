@@ -5,7 +5,7 @@ import { ReactNotificationOptions, store } from 'react-notifications-component';
  * @param title タイトル
  * @param message メッセージ
  * @param type 通知タイプ
- * @param autoHide 自動的に非表示にするか。デフォルトはtrueです。
+ * @param isCountdown カウントダウンするか。デフォルトはfalseです。
  * @param duration 自動的に非表示になるまでの時間。デフォルトは5000msです。
  * @returns
  */
@@ -13,7 +13,7 @@ export function ShowPopup(
   title: string,
   message: string,
   type: ReactNotificationOptions['type'],
-  autoHide: boolean = true,
+  isCountdown: boolean = false,
   duration: number = 5000
 ): string {
   return store.addNotification({
@@ -27,7 +27,7 @@ export function ShowPopup(
     dismiss: {
       duration: duration,
       pauseOnHover: true,
-      onScreen: !autoHide,
+      onScreen: isCountdown,
     },
   });
 }
@@ -37,16 +37,16 @@ export function ShowPopup(
  * @param title タイトル
  * @param message メッセージ
  * @param type 通知タイプ
- * @param autoHide 自動的に非表示にするか。デフォルトはfalseです。
- * @param duration 自動的に非表示になるまでの時間。デフォルトは5000msです。
+ * @param isCountdown カウントダウンするか。デフォルトはfalseです。
+ * @param duration 自動的に非表示になるまでの時間。デフォルトは0(無制限)です。
  * @returns
  */
 export function ShowTemporaryPopup(
   title: string,
   message: string,
   type: ReactNotificationOptions['type'],
-  autoHide: boolean = false,
-  duration: number = 5000
+  isCountdown: boolean = false,
+  duration: number = 0
 ): string {
   return store.addNotification({
     title: title,
@@ -58,7 +58,8 @@ export function ShowTemporaryPopup(
     animationOut: ['animate__animated', 'animate__zoomOut', 'animate__faster'],
     dismiss: {
       duration: duration,
-      onScreen: !autoHide,
+      onScreen: isCountdown,
+
     },
   });
 }

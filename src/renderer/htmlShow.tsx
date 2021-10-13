@@ -3,6 +3,7 @@ import { ArrowLeftCircle } from 'react-feather';
 
 interface HtmlShowDivProps {
   html: string;
+  tableOfContents: string;
   changeDivToDirectory: () => void;
 }
 
@@ -11,7 +12,7 @@ export class HtmlShowDiv extends React.Component<HtmlShowDivProps, {}> {
     super(props);
   }
   render() {
-    const { html, changeDivToDirectory } = this.props;
+    const { html, tableOfContents, changeDivToDirectory } = this.props;
     const backButtonCss: React.CSSProperties = {
       height: 50,
       width: 50,
@@ -22,11 +23,22 @@ export class HtmlShowDiv extends React.Component<HtmlShowDivProps, {}> {
     return (
       <div>
         <div style={backButtonCss}>
-          <ArrowLeftCircle style={{ height: 50, width: 50 }} onClick={changeDivToDirectory} />
+          <ArrowLeftCircle
+            className="border border-success"
+            style={{ height: 50, width: 50 }}
+            onClick={changeDivToDirectory}
+          />
         </div>
-        <div>
-          <div id="buttonBlank" style={{ height: 50 }}></div>
-          <div id="html" dangerouslySetInnerHTML={{ __html: html }}></div>
+        <div className="d-flex flex-row-reverse justify-content-start">
+          <div
+            id="htmlShow_tableOfContents"
+            className="border border-primary m-1"
+            dangerouslySetInnerHTML={{ __html: tableOfContents }}
+          ></div>
+          <div id="htmlShow_body" className="border border-info m-1 flex-grow-1">
+            <div id="buttonBlank" style={{ height: 50 }}></div>
+            <div id="htmlShow_main" dangerouslySetInnerHTML={{ __html: html }}></div>
+          </div>
         </div>
       </div>
     );
