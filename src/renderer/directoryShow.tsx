@@ -245,7 +245,6 @@ export class DirectoryShowDiv extends React.Component<DirectoryShowDivProps, Dir
       dirName = dirNameLatest;
     }
     const dirLists: DirectoryData[] | null = await window.api.getDirectoryList(dirName, level);
-    console.log(dirLists);
     if(dirLists === null){
       ShowPopup("表示するディレクトリが存在しませんでした。", " ", "danger");
     }
