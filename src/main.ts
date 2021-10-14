@@ -6,6 +6,9 @@ import { FileOpenToEmacs } from './main/FileOpenToEmacs';
 import { FileChangeFromOrgToHTML } from './main/FileChangeFromOrgToHTML';
 import { PathChangeFromRelativeToAbsolute } from './main/PathChangeFromRelativeToAbsolute';
 import { GetDefaultData } from './main/GetDefaultData';
+import { readFileSync } from 'fs';
+import { UpdateMenuBar } from './main/MenuBarController';
+
 
 const extPath =
   os.platform() === 'darwin'
@@ -70,6 +73,9 @@ app.whenReady().then(async () => {
 
 // すべてのウィンドウが閉じられたらアプリを終了する
 app.once('window-all-closed', () => app.quit());
+
+// メニューバーを表示する
+UpdateMenuBar();
 
 //******************************************************
 // レンダープロセスと通信するイベント群
