@@ -13,8 +13,8 @@ export async function getDirectoryList(
   return DirList;
 }
 
-export async function fileOpenToEmacs(dirName: string): Promise<string | null> {
-  const Message: string | null = await ipcRenderer.invoke('fileOpenToEmacs', dirName);
+export async function fileOpenToEmacs(dirName: string): Promise<ApiResultData> {
+  const Message: ApiResultData = await ipcRenderer.invoke('fileOpenToEmacs', dirName);
   return Message;
 }
 

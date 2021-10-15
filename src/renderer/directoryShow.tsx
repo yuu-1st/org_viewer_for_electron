@@ -31,8 +31,8 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
       const popId = ShowTemporaryPopup("実行中…","emacsを起動しています。", "default");
       const result = await window.api.fileOpenToEmacs(value);
       DeletePopup(popId); // 非表示にする。
-      if (result !== 'ok') {
-        ShowPopup("Emacsを起動できませんでした。", (result?? " "), "danger");
+      if (result.result === "error") {
+        ShowPopup("Emacsを起動できませんでした。", (result.data ?? " "), "danger");
       }
     }
   };

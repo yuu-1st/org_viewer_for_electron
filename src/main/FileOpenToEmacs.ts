@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 import fs from 'fs';
+import { ApiResultData } from '../@types/connectionDataType';
 
 /**
  * orgファイルをGUI版Emacsで開きます。
@@ -10,19 +11,28 @@ import fs from 'fs';
 export const FileOpenToEmacs = async (
   event: Electron.IpcMainInvokeEvent,
   dirPath: string
-): Promise<string> => {
-  let result: string = '';
-  result = await new Promise((resolve, reject) => {
+): Promise<ApiResultData> => {
+  let result: ApiResultData;
+  result = await new Promise((resolve) => {
     if (fs.existsSync(dirPath)) {
       exec('/Applications/Emacs.app/Contents/MacOS/Emacs ' + dirPath, (err, stdout, stderr) => {
         if (err) {
-          reject(`エラー: ${stderr}`);
+          resolve({
+            result: "error",
+            data :stderr,
+          });
         } else {
-          resolve('ok');
+          resolve({
+            result: "success",
+            data : "",
+          });
         }
       });
     } else {
-      reject('エラー：ファイルがありません。');
+      resolve({
+        result: "error",
+        data: "ファイルがありません。",
+      });
     }
   });
   return result;
