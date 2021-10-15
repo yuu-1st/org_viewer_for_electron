@@ -21,6 +21,7 @@ class RootDiv extends React.Component<{}, RootDivState> {
       htmlShowTableOfContents: '',
       showDiv: 'Directory',
     };
+    window.api.ipcRendererOnShowLicenseList(this.showLicenseList);
   }
 
   /**
@@ -47,6 +48,10 @@ class RootDiv extends React.Component<{}, RootDivState> {
     });
   };
 
+  showLicenseList = (text: string) => {
+    this.changeDivToHtml(text, '');
+  };
+
   render() {
     const { htmlShowData, showDiv, htmlShowTableOfContents } = this.state;
     const hiddenStyle: React.CSSProperties = {
@@ -60,7 +65,11 @@ class RootDiv extends React.Component<{}, RootDivState> {
             <DirectoryShowDiv changeDivToHtml={this.changeDivToHtml} />
           </div>
           <div id="directory" style={showDiv !== 'Html' ? hiddenStyle : {}}>
-            <HtmlShowDiv html={htmlShowData} tableOfContents={htmlShowTableOfContents} changeDivToDirectory={this.changeDivToDirectory} />
+            <HtmlShowDiv
+              html={htmlShowData}
+              tableOfContents={htmlShowTableOfContents}
+              changeDivToDirectory={this.changeDivToDirectory}
+            />
           </div>
         </div>
       </div>
@@ -148,8 +157,8 @@ function HTMLCreateTableOfContents(dom: Document): HTMLDivElement {
 
       // コンテナ要素である<div>の中から最後の<li>を取得する。
       let lastUl = result.lastElementChild;
-      let lastLi : Element | null;
-      if(!lastUl){
+      let lastLi: Element | null;
+      if (!lastUl) {
         let ul2 = document.createElement('ul');
         let li2 = document.createElement('li');
         ul2.appendChild(li2);
@@ -176,8 +185,8 @@ function HTMLCreateTableOfContents(dom: Document): HTMLDivElement {
 
       // コンテナ要素である<div>の中から最後の<li>を取得する。
       let lastUl = result.lastElementChild;
-      let lastLi : Element | null;
-      if(!lastUl){
+      let lastLi: Element | null;
+      if (!lastUl) {
         let ul2 = document.createElement('ul');
         let li2 = document.createElement('li');
         ul2.appendChild(li2);
@@ -186,7 +195,7 @@ function HTMLCreateTableOfContents(dom: Document): HTMLDivElement {
       }
       lastLi = lastUl.lastElementChild;
       let last2Ul = lastLi?.lastElementChild;
-      if(!last2Ul){
+      if (!last2Ul) {
         let ul3 = document.createElement('ul');
         let li3 = document.createElement('li');
         ul3.appendChild(li3);

@@ -28,9 +28,26 @@ export async function fileChangeFromOrgToHTML(dirName: string): Promise<ApiResul
   return Message;
 }
 
-export async function pathChangeFromRelativeToAbsolute(changePath: string, originalPath: string): Promise<string> {
-  const Message: string = await ipcRenderer.invoke('pathChangeFromRelativeToAbsolute', changePath, originalPath);
+export async function pathChangeFromRelativeToAbsolute(
+  changePath: string,
+  originalPath: string
+): Promise<string> {
+  const Message: string = await ipcRenderer.invoke(
+    'pathChangeFromRelativeToAbsolute',
+    changePath,
+    originalPath
+  );
   return Message;
+}
+
+/**
+ * メインプロセスから呼び出した時に呼び出す関数を登録する関数
+ * @param callback
+ */
+export function ipcRendererOnShowLicenseList(callback: (text: string) => void): void {
+  ipcRenderer.on('showLicenseList', (event, text) => {
+    callback(text);
+  });
 }
 
 contextBridge.exposeInMainWorld('api', {
@@ -39,4 +56,5 @@ contextBridge.exposeInMainWorld('api', {
   getDefaultData: getDefaultData,
   fileChangeFromOrgToHTML: fileChangeFromOrgToHTML,
   pathChangeFromRelativeToAbsolute: pathChangeFromRelativeToAbsolute,
+  ipcRendererOnShowLicenseList: ipcRendererOnShowLicenseList,
 });
