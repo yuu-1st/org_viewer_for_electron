@@ -1,6 +1,7 @@
 import { ApiResultData } from '../@types/connectionDataType';
 import fs from 'fs';
 import { exec } from 'child_process';
+import { ExecPathEscape } from './ExecPathEscape';
 
 /**
  * orgファイルをpandocを経由してHTML形式に変更します。
@@ -15,7 +16,7 @@ export const FileChangeFromOrgToHTML = async (
   let result: ApiResultData;
   result = await new Promise((resolve, reject) => {
     if (fs.existsSync(dirPath) && dirPath.split('.').slice(-1)[0] === 'org') {
-      exec('/usr/local/bin/pandoc -f org -t html ' + dirPath, (err, stdout, stderr) => {
+      exec('/usr/local/bin/pandoc -f org -t html ' + ExecPathEscape(dirPath), (err, stdout, stderr) => {
         if (err) {
           resolve({ result: 'error', data: stderr });
         } else {

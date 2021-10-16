@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import fs from 'fs';
 import { ApiResultData } from '../@types/connectionDataType';
+import { ExecPathEscape } from './ExecPathEscape';
 
 /**
  * orgファイルをGUI版Emacsで開きます。
@@ -15,7 +16,7 @@ export const FileOpenToEmacs = async (
   let result: ApiResultData;
   result = await new Promise((resolve) => {
     if (fs.existsSync(dirPath)) {
-      exec('/Applications/Emacs.app/Contents/MacOS/Emacs ' + dirPath, (err, stdout, stderr) => {
+      exec('/Applications/Emacs.app/Contents/MacOS/Emacs ' + ExecPathEscape(dirPath), (err, stdout, stderr) => {
         if (err) {
           resolve({
             result: "error",
