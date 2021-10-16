@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { ApiResultData, DirectoryData } from './@types/connectionDataType';
+import { ApiResultData, DefaultData, DirectoryData } from './@types/connectionDataType';
 
 export async function getDirectoryList(
   dirName: string,
@@ -18,8 +18,8 @@ export async function fileOpenToEmacs(dirName: string): Promise<ApiResultData> {
   return Message;
 }
 
-export async function getDefaultData(): Promise<{ HomeDir: string }> {
-  const Message: { HomeDir: string } = await ipcRenderer.invoke('getDefaultData');
+export async function getDefaultData(): Promise<DefaultData> {
+  const Message: DefaultData = await ipcRenderer.invoke('getDefaultData');
   return Message;
 }
 

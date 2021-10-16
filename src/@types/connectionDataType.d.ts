@@ -6,6 +6,11 @@ export interface DirectoryData {
   rootPath: string;
 }
 
+export interface DefaultData{
+  HomeDir : string,
+  isUpdate : ApiResultData | null,
+}
+
 export interface ApiResultData {
     result : 'success' | 'error';
     data : string;

@@ -115,11 +115,16 @@ function CreateMenuBar(mainWindow: BrowserWindow) {
       {
         label: 'License',
         click: async () => {
-          // const { shell } = require('electron');
-          // await shell.openExternal('https://electronjs.org');
           mainWindow.webContents.send('showLicenseList', LicenseList);
         },
       },
+      {
+        label: 'Website',
+        click: async () => {
+          const { shell } = require('electron');
+          await shell.openExternal('https://github.com/yuu-1st/org_viewer_for_electron/releases');
+        }
+      }
     ],
   });
 

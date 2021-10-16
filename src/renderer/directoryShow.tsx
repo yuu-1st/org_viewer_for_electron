@@ -1,5 +1,5 @@
 import React from 'react';
-import { DirectoryData } from './../@types/connectionDataType';
+import { DefaultData, DirectoryData } from './../@types/connectionDataType';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, ListGroup, ListGroupItem, Form } from 'react-bootstrap';
 import { BookOpen, Edit } from 'react-feather';
@@ -213,9 +213,12 @@ export class DirectoryShowDiv extends React.Component<DirectoryShowDivProps, Dir
    * メインプロセスからデフォルトデータを取得し、stateに追加する。
    */
   setDefaultData = async () => {
-    const data = await window.api.getDefaultData();
+    const data : DefaultData = await window.api.getDefaultData();
     this.setState({ dirName: data.HomeDir });
     this.handleFormSubmit();
+    if(data.isUpdate && data.isUpdate.result === "success"){
+      ShowPopup('アップデート情報', data.isUpdate.data ?? "", 'info', true);
+    }
   };
 
   /**

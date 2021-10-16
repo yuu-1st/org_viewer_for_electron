@@ -3,7 +3,7 @@
 import path from 'path';
 
 /** エディタで補完を効かせるために型定義をインポート */
-import { Configuration } from 'webpack';
+import { Configuration, DefinePlugin } from 'webpack';
 
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
@@ -71,6 +71,11 @@ const base: Configuration = {
    * 'Uncaught EvalError' が表示されてしまうことに注意
    */
   devtool: isDev ? 'inline-source-map' : false,
+  plugins : [
+    new DefinePlugin({
+      'process.env.VERSION_ENV': `"${require('./package.json').version}"`,
+    })
+  ]
 };
 
 // メインプロセス用の設定
