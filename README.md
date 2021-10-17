@@ -51,11 +51,29 @@ my_helpをGUIで操作するアプリケーション
 
 - インストール後、Applicationディレクトリにアプリを移動させます。
 
-- MacOSの場合、初回起動時に「開発元を検証できないため開けません。」というポップが表示されるため、一度キャンセルを押し、
-「システム環境設定」→「セキュリティとプライバシー」→「一般」→「ダウンロードしたアプリケーションの実行許可」から、
-「使用がブロックされました」の右にある「このまま開く」を押し、実行許可を出す必要があります。
+- MacOSの場合、初回起動時に「開発元を検証できないため開けません。」というポップが表示されるため、一度キャンセルを押し、以下のどちらかの手順で実行許可を出す必要があります。
+  - 「システム環境設定」→「セキュリティとプライバシー」→「一般」→「ダウンロードしたアプリケーションの実行許可」から、
+「“org_viewer_for_electron.app”は開発元を確認できないため、使用がブロックされました」の右にある「このまま開く」を押し、「開く」を選択。
+  - Finderから起動する際に右クリック→「開く」→「“org_viewer_for_electron.app”の開発元を検証できません。開いてもよろしいですか?」から「開く」を選択。
+
 
 # Versions
+
+## v0.3.0
+
+- add features
+  - Added display an error when the directory does not exist.
+  - Added a table of contents on the right side when displaying HTML.
+  - Added the license list.
+  - Added update notifications.
+
+- fix features
+  - Fixed an issue where no error was displayed.
+  - Fixed an issue where directories and filenames could not be displayed properly if they had symbols.
+
+- known issue
+  - HTML tag "a" does not work.
+  - If you scroll and close a document, scrolling will continue when you open another document.
 
 ## v0.2.0
 
