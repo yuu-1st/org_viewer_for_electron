@@ -12,7 +12,7 @@ async function exe() {
       for (const element in packages) {
         if (packages[element].licenseFile !== undefined) {
           fileData += `<h3>${packages[element].name}</h3>`;
-          fileData += `<div>${packages[element].licenseFile.replace(/\r?\n/g, '<br>').replace(/\`/g, '\\\`')}</div><br>`;
+          fileData += `<div>${packages[element].licenseFile.replace(/\r?\n/g, '<br>').replace(/\\/g, '\\\\').replace(/\`/g, '\\\`')}</div><br>`;
         }
       }
       resolve();
