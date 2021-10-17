@@ -6,8 +6,8 @@
  */
 export function ExecPathEscape(dirPath : string) : string {
   let result = dirPath.replace(/\\/g, "\\\\"); // \ -> \\
-  result = dirPath.replace(/"/g, "\\\""); // " -> \"
-  result = dirPath.replace(/!/g, "\\\!"); // ! -> \!
+  result = result.replace(/"/g, "\\\""); // " -> \"
+  result = result.replace(/!/g, "\"'\!'\""); // ! -> \!
   result = `"${result}"`; // path -> "path"
   console.log(result);
   return result;
