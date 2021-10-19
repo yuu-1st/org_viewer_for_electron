@@ -1,5 +1,7 @@
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
+import { shell } from 'electron';
 import fs from 'fs';
+// import { stderr } from 'process';
 import { ApiResultData } from '../@types/connectionDataType';
 import { ExecPathEscape } from './ExecPathEscape';
 
@@ -16,23 +18,50 @@ export const FileOpenToEmacs = async (
   let result: ApiResultData;
   result = await new Promise((resolve) => {
     if (fs.existsSync(dirPath)) {
-      exec('/Applications/Emacs.app/Contents/MacOS/Emacs ' + ExecPathEscape(dirPath), (err, stdout, stderr) => {
-        if (err) {
-          resolve({
-            result: "error",
-            data :stderr,
-          });
-        } else {
-          resolve({
-            result: "success",
-            data : "",
-          });
+      // exec('arch -arch x86_64 /bin/bash -c "/Applications/Emacs.app/Contents/MacOS/Emacs ' + ExecPathEscape(`"${ExecPathEscape(dirPath)}"`) + '"', (err, stdout, stderr) => {
+      exec(
+        `/Applications/Emacs.app/Contents/MacOS/Emacs "${ExecPathEscape(dirPath)}"`,
+        (err, stdout, stderr) => {
+          if (err) {
+            console.log(err.message);
+            resolve({
+              result: 'error',
+              data: stderr,
+            });
+          } else {
+            resolve({
+              result: 'success',
+              data: '',
+            });
+          }
         }
-      });
+      );
+
+      // const exe = spawn('/Applications/Emacs.app/Contents/MacOS/Emacs', [`${dirPath}`], {
+      //   shell: true,
+      // });
+      // exe.stdout.on('data', (stdout) => {
+      //   resolve({
+      //     result: 'success',
+      //     data: '',
+      //   });
+      // });
+      // exe.stderr.on('data', (stderr) => {
+      //   resolve({
+      //     result: 'error',
+      //     data: stderr,
+      //   });
+      // });
+      // exe.on('close', (code) => {
+      //   resolve({
+      //     result: 'error',
+      //     data: `${code}`,
+      //   });
+      // });
     } else {
       resolve({
-        result: "error",
-        data: "ファイルがありません。",
+        result: 'error',
+        data: 'ファイルがありません。',
       });
     }
   });
