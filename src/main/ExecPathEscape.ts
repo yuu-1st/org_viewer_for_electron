@@ -9,6 +9,5 @@ export function ExecPathEscape(dirPath : string) : string {
   result = result.replace(/"/g, "\\\""); // " -> \"
   result = result.replace(/!/g, "\"'\!'\""); // ! -> \!
   // result = `"${result}"`; // path -> "path"
-  console.log(result);
   return result;
 }
