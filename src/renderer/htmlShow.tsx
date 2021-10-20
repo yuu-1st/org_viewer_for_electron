@@ -32,10 +32,10 @@ export class HtmlShowDiv extends React.Component<HtmlShowDivProps, {}> {
         <div className="d-flex flex-row-reverse justify-content-start">
           <div
             id="htmlShow_tableOfContents"
-            className="border border-primary m-1"
+            className="border border-primary m-1 p-1"
             dangerouslySetInnerHTML={{ __html: tableOfContents }}
           ></div>
-          <div id="htmlShow_body" className="border border-info m-1 flex-grow-1">
+          <div id="htmlShow_body" className="border border-info m-1 p-1 flex-grow-1">
             <div id="buttonBlank" style={{ height: 50 }}></div>
             <div id="htmlShow_main" dangerouslySetInnerHTML={{ __html: html }}></div>
           </div>
