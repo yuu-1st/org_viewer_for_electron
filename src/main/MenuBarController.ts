@@ -69,19 +69,32 @@ function CreateMenuBar(mainWindow: BrowserWindow) {
   });
 
   // { role: 'viewMenu' }
+  const viewSubMenu:  Electron.MenuItemConstructorOptions[] = [
+    { role: 'resetZoom' },
+    { role: 'zoomIn' },
+    { role: 'zoomOut' },
+    { type: 'separator' },
+    { role: 'togglefullscreen' },
+  ];
+
+  if(process.env.NODE_ENV === 'development'){
+    viewSubMenu.push({ role: 'reload' });
+  }
+
   template.push({
     label: 'View',
-    submenu: [
-      // { role: 'reload' },
-      // { role: 'forceReload' },
-      // { role: 'toggleDevTools' },
-      // { type: 'separator' },
-      { role: 'resetZoom' },
-      { role: 'zoomIn' },
-      { role: 'zoomOut' },
-      { type: 'separator' },
-      { role: 'togglefullscreen' },
-    ],
+    submenu: viewSubMenu
+    // submenu: [
+    //   // { role: 'reload' },
+    //   // { role: 'forceReload' },
+    //   // { role: 'toggleDevTools' },
+    //   // { type: 'separator' },
+    //   { role: 'resetZoom' },
+    //   { role: 'zoomIn' },
+    //   { role: 'zoomOut' },
+    //   { type: 'separator' },
+    //   { role: 'togglefullscreen' },
+    // ],
   });
 
   // { role: 'windowMenu' }

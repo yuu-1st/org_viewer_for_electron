@@ -3,12 +3,14 @@ import { ApiResultData, DefaultData, DirectoryData } from './@types/connectionDa
 
 export async function getDirectoryList(
   dirName: string,
-  dirLevel: number
+  dirLevel: number,
+  isAll: boolean,
 ): Promise<DirectoryData[] | null> {
   const DirList: DirectoryData[] | null = await ipcRenderer.invoke(
     'getDirectoryList',
     dirName,
-    dirLevel
+    dirLevel,
+    isAll ? 2 : 0,
   );
   return DirList;
 }

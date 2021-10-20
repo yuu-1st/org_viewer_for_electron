@@ -9,7 +9,7 @@ interface DirectoryShowListElementProps {
   /** 表示するデータ情報 */
   dirLists: DirectoryData[] | null;
   handleClickDirectory: (dirName: string) => void;
-  changeDivToHtml : (html : string, dirName: string) => void;
+  changeDivToHtml: (html: string, dirName: string) => void;
 }
 
 /**
@@ -28,35 +28,35 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
    */
   openFile = async (value: string, extension: string | null) => {
     if (extension === 'org') {
-      const popId = ShowTemporaryPopup("実行中…","emacsを起動しています。", "default");
+      const popId = ShowTemporaryPopup('実行中…', 'emacsを起動しています。', 'default');
       const result = await window.api.fileOpenToEmacs(value);
       DeletePopup(popId); // 非表示にする。
-      if (result.result === "error") {
-        ShowPopup("Emacsを起動できませんでした。", (result.data ?? " "), "danger");
+      if (result.result === 'error') {
+        ShowPopup('Emacsを起動できませんでした。', result.data ?? ' ', 'danger');
       }
     }
   };
 
   openView = async (dirName: string, extension: string | null) => {
     if (extension === 'org') {
-      const popId = ShowTemporaryPopup("実行中…","orgファイルを開いています。", "default");
+      const popId = ShowTemporaryPopup('実行中…', 'orgファイルを開いています。', 'default');
       const result = await window.api.fileChangeFromOrgToHTML(dirName);
       DeletePopup(popId); // 非表示にする。
-      if(result.result === 'success'){
+      if (result.result === 'success') {
         this.props.changeDivToHtml(result.data, dirName);
-      }else{
-        ShowPopup("orgファイルを開けませんでした。",result.data, "danger");
+      } else {
+        ShowPopup('orgファイルを開けませんでした。', result.data, 'danger');
       }
     } else if (extension === '/dir') {
       this.props.handleClickDirectory(dirName);
     }
-  }
+  };
 
   render() {
     const { dirLists, handleClickDirectory, changeDivToHtml } = this.props;
-    const paddingLeft : React.CSSProperties = {
+    const paddingLeft: React.CSSProperties = {
       marginLeft: 30,
-    }
+    };
     if (dirLists === null) return null;
     return (
       <ListGroup>
@@ -72,23 +72,25 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
             colorStyle.color = 'red';
           }
           return (
-            <ListGroupItem
-              key={dirList.name}
-              style={colorStyle}
-            >
+            <ListGroupItem key={dirList.name} style={colorStyle}>
               {dirList.name}
               {
                 /** orgファイルであれば編集ボタンを表示する */
-                dirList.extension === 'org' && (<Edit style={paddingLeft}
-                onClick={(e) => this.openFile(dirList.rootPath, dirList.extension)}
-                />)
+                dirList.extension === 'org' && (
+                  <Edit
+                    style={paddingLeft}
+                    onClick={(e) => this.openFile(dirList.rootPath, dirList.extension)}
+                  />
+                )
               }
               {
                 /** orgファイルかディレクトリであれば開くボタンを表示する */
-                (dirList.extension === 'org' || needTree) &&
-                (<BookOpen style={paddingLeft}
-                onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
-                />)
+                (dirList.extension === 'org' || needTree) && (
+                  <BookOpen
+                    style={paddingLeft}
+                    onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
+                  />
+                )
               }
               {
                 /* ディレクトリであれば再帰的に表示する */
@@ -111,8 +113,10 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
 interface DirectoryShowSelectFormProps {
   dirName: string;
   level: number;
+  isAll: boolean;
   handleDirNameChange: (dirName: string) => void;
   handleLevelChange: (level: number) => void;
+  handleIsAllChange: (isAll: boolean) => void;
   handleFormSubmit: () => void;
 }
 
@@ -141,6 +145,14 @@ class DirectoryShowSelectForm extends React.Component<DirectoryShowSelectFormPro
   };
 
   /**
+   * is show allが更新された時に、ベースクラスの更新関数を呼び出します。
+   * @param value
+   */
+  handleIsAllOnChange = (value: boolean) => {
+    this.props.handleIsAllChange(value);
+  };
+
+  /**
    * フォームの更新を反映します。
    * @param event
    */
@@ -150,7 +162,7 @@ class DirectoryShowSelectForm extends React.Component<DirectoryShowSelectFormPro
   };
 
   render() {
-    const { dirName, level } = this.props;
+    const { dirName, level, isAll } = this.props;
     return (
       <Form onSubmit={this.handleSubmit}>
         <Form.Floating className="mb-3">
@@ -171,6 +183,15 @@ class DirectoryShowSelectForm extends React.Component<DirectoryShowSelectFormPro
           />
           <Form.Label htmlFor="directoryLevel">Directory Level:</Form.Label>
         </Form.Floating>
+        <Form.Floating className="mb-3">
+          <Form.Label htmlFor="isShowAll">is show all:</Form.Label>
+          <Form.Check
+            type="checkbox"
+            checked={isAll}
+            id="isShowAll"
+            onChange={(e) => this.handleIsAllOnChange(e.target.checked)}
+          />
+        </Form.Floating>
         <Button type="submit">Search</Button>
         <br />
       </Form>
@@ -183,18 +204,23 @@ interface DirectoryShowDivState {
   dirName: string;
   /** ディレクトリ階層数 */
   level: number;
+  /** ディレクトリ表示数 */
+  isAll: boolean;
   /** 表示するデータ情報 */
   dirLists: DirectoryData[] | null;
 }
 
 interface DirectoryShowDivProps {
-  changeDivToHtml : (html : string, dirName: string) => void;
+  changeDivToHtml: (html: string, dirName: string) => void;
 }
 
 /**
  * ベースとなる要素を扱うクラス
  */
-export class DirectoryShowDiv extends React.Component<DirectoryShowDivProps, DirectoryShowDivState> {
+export class DirectoryShowDiv extends React.Component<
+  DirectoryShowDivProps,
+  DirectoryShowDivState
+> {
   /**
    * コンストラクタ。メインプロセスからデフォルトデータを取得します。
    * @param props
@@ -205,6 +231,7 @@ export class DirectoryShowDiv extends React.Component<DirectoryShowDivProps, Dir
     this.state = {
       dirName: '',
       level: 1,
+      isAll: false,
       dirLists: null,
     };
   }
@@ -213,11 +240,11 @@ export class DirectoryShowDiv extends React.Component<DirectoryShowDivProps, Dir
    * メインプロセスからデフォルトデータを取得し、stateに追加する。
    */
   setDefaultData = async () => {
-    const data : DefaultData = await window.api.getDefaultData();
+    const data: DefaultData = await window.api.getDefaultData();
     this.setState({ dirName: data.HomeDir });
     this.handleFormSubmit();
-    if(data.isUpdate && data.isUpdate.result === "success"){
-      ShowPopup('アップデート情報', data.isUpdate.data ?? "", 'info', true);
+    if (data.isUpdate && data.isUpdate.result === 'success') {
+      ShowPopup('アップデート情報', data.isUpdate.data ?? '', 'info', true);
     }
   };
 
@@ -238,18 +265,26 @@ export class DirectoryShowDiv extends React.Component<DirectoryShowDivProps, Dir
   };
 
   /**
+   * フォームに表示する「全てのディレクトリを表示するか」をステートにセットします。
+   * @param isAll 全てのディレクトリを表示するか
+   */
+  handleIsAllChange = (isAll: boolean) => {
+    this.setState({ isAll });
+  };
+
+  /**
    * ステートにセットされた値から、表示するディレクトリおよび階層数を更新し、描画します。
    * @param dirNameLatest stateに頼らずに表示を更新する場合にのみ指定する。
    */
   handleFormSubmit = async (dirNameLatest: string | null = null) => {
-    let { dirName, level } = this.state;
+    let { dirName, level, isAll } = this.state;
     if (dirNameLatest) {
       // setStateがリアルタイムで反映されないため、関数を再利用するために引数でリアルタイム値を取得する
       dirName = dirNameLatest;
     }
-    const dirLists: DirectoryData[] | null = await window.api.getDirectoryList(dirName, level);
-    if(dirLists === null){
-      ShowPopup("表示するディレクトリが存在しませんでした。", " ", "danger");
+    const dirLists: DirectoryData[] | null = await window.api.getDirectoryList(dirName, level, isAll);
+    if (dirLists === null) {
+      ShowPopup('表示するディレクトリが存在しませんでした。', ' ', 'danger');
     }
     this.setState({ dirLists });
   };
@@ -264,15 +299,17 @@ export class DirectoryShowDiv extends React.Component<DirectoryShowDivProps, Dir
   };
 
   render() {
-    const { dirName, level, dirLists } = this.state;
+    const { dirName, level, dirLists, isAll } = this.state;
     const { changeDivToHtml } = this.props;
     return (
       <div>
         <DirectoryShowSelectForm
           dirName={dirName}
           level={level}
+          isAll={isAll}
           handleDirNameChange={this.handleDirNameChange}
           handleLevelChange={this.handleLevelChange}
+          handleIsAllChange={this.handleIsAllChange}
           handleFormSubmit={this.handleFormSubmit}
         />
         <DirectoryShowListElement
