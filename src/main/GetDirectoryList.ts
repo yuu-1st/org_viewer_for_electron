@@ -20,7 +20,19 @@ export const GetDirectoryList = async (
   if (!fs.existsSync(dirPath)) return null;
   // 末尾のスラッシュを消す
   dirPath = dirPath.replace(/\/$/, '');
-  return await getLists(dirPath, level, isAll);
+  const upDirectory = dirPath.replace(/\/[^\/]+$/, '');
+  const result = await getLists(dirPath, level, isAll);
+  if(result !== null && upDirectory !== ""){
+    // 一つ上に行くを追加する
+    result.unshift({
+      name: '..',
+      isDirectory: true,
+      extension: '/dir',
+      subDirectory: null,
+      rootPath: upDirectory,
+    })
+  }
+  return result;
 };
 
 /**
