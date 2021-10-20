@@ -2,7 +2,7 @@ import React from 'react';
 import { DefaultData, DirectoryData } from './../@types/connectionDataType';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, ListGroup, ListGroupItem, Form } from 'react-bootstrap';
-import { BookOpen, Edit } from 'react-feather';
+import { BookOpen, Edit, Folder } from 'react-feather';
 import { DeletePopup, ShowPopup, ShowTemporaryPopup } from './popup';
 
 interface DirectoryShowListElementProps {
@@ -55,7 +55,8 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
   render() {
     const { dirLists, handleClickDirectory, changeDivToHtml } = this.props;
     const paddingLeft: React.CSSProperties = {
-      marginLeft: 30,
+      marginLeft: 15,
+      marginRight: 15,
     };
     if (dirLists === null) return null;
     return (
@@ -73,7 +74,6 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
           }
           return (
             <ListGroupItem key={dirList.name} style={colorStyle}>
-              {dirList.name}
               {
                 /** orgファイルであれば編集ボタンを表示する */
                 dirList.extension === 'org' && (
@@ -85,13 +85,19 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
               }
               {
                 /** orgファイルかディレクトリであれば開くボタンを表示する */
-                (dirList.extension === 'org' || needTree) && (
+                (dirList.extension === 'org' && (
                   <BookOpen
                     style={paddingLeft}
                     onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
                   />
-                )
+                )) || (needTree && (
+                  <Folder
+                    style={paddingLeft}
+                    onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
+                  />
+                ))
               }
+              {dirList.name}
               {
                 /* ディレクトリであれば再帰的に表示する */
                 needTree && (
