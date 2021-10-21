@@ -3,12 +3,14 @@ import ReactDOM from 'react-dom';
 import { DirectoryShowDiv } from './renderer/directoryShow';
 import { HtmlShowDiv } from './renderer/htmlShow';
 import ReactNotification from 'react-notifications-component';
-import 'react-notifications-component/dist/theme.css';
-import 'animate.css/animate.min.css';
-import './renderer.css';
 import { OverMenuBar } from './renderer/overMenuBar';
 import { HTMLCreateTableOfContents } from './renderer/object/HTMLCreateTableOfContents';
 import { HtmlLinkToAbsolutePath } from './renderer/object/HtmlLinkToAbsolutePath';
+
+import 'react-notifications-component/dist/theme.css';
+import 'animate.css/animate.min.css';
+import './renderer.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface RootDivState {
   htmlShowData: string;

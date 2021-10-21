@@ -1,6 +1,5 @@
 import React from 'react';
 import { DefaultData, DirectoryData } from './../@types/connectionDataType';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, ListGroup, ListGroupItem, Form } from 'react-bootstrap';
 import { BookOpen, Edit, Folder } from 'react-feather';
 import { DeletePopup, ShowPopup, ShowTemporaryPopup } from './popup';
