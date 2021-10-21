@@ -5,12 +5,12 @@ img {
 #htmlShow_body {
   overflow-x: scroll;
   overflow-y: scroll;
-  height: calc(100vh - 0.5rem);
+  height: calc(100vh - 0.5rem - 30px);
 }
 
 #htmlShow_tableOfContents {
   overflow-x: scroll;
   overflow-y: scroll;
-  height: calc(100vh - 0.5rem);
+  height: calc(100vh - 0.5rem - 30px);
   min-width: 20%;
 }

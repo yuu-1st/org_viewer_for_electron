@@ -6,6 +6,7 @@ import ReactNotification from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
 import 'animate.css/animate.min.css';
 import './renderer.css';
+import { OverMenuBar } from './renderer/overMenuBar';
 
 interface RootDivState {
   htmlShowData: string;
@@ -59,17 +60,16 @@ class RootDiv extends React.Component<{}, RootDivState> {
     };
     return (
       <div className="app-container">
-        <ReactNotification /> {/*  通知用 */}
-        <div id="SwitchDiv">
-          <div id="directory" style={showDiv !== 'Directory' ? hiddenStyle : {}}>
-            <DirectoryShowDiv changeDivToHtml={this.changeDivToHtml} />
-          </div>
-          <div id="directory" style={showDiv !== 'Html' ? hiddenStyle : {}}>
-            <HtmlShowDiv
-              html={htmlShowData}
-              tableOfContents={htmlShowTableOfContents}
-              changeDivToDirectory={this.changeDivToDirectory}
-            />
+        <OverMenuBar type={showDiv} changeDivToDirectory={this.changeDivToDirectory} />
+        <div className="main">
+          <ReactNotification /> {/*  通知用 */}
+          <div id="SwitchDiv">
+            <div id="directory" style={showDiv !== 'Directory' ? hiddenStyle : {}}>
+              <DirectoryShowDiv changeDivToHtml={this.changeDivToHtml} />
+            </div>
+            <div id="directory" style={showDiv !== 'Html' ? hiddenStyle : {}}>
+              <HtmlShowDiv html={htmlShowData} tableOfContents={htmlShowTableOfContents} />
+            </div>
           </div>
         </div>
       </div>
