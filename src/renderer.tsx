@@ -13,17 +13,26 @@ import './renderer.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface RootDivState {
-  htmlShowData: string;
-  htmlShowTableOfContents: string;
+  /** 現在表示している場所 */
   showDiv: 'Directory' | 'Html';
+
+  /** htmlShow のデータ */
+  htmlShowObject: {
+    /** htmlShow のbody部分 */
+    Body: string;
+    /** htmlShow の目次部分 */
+    TableOfContents: string;
+  }
 }
 
 class RootDiv extends React.Component<{}, RootDivState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      htmlShowData: '',
-      htmlShowTableOfContents: '',
+      htmlShowObject: {
+        Body: '',
+        TableOfContents: '',
+      },
       showDiv: 'Directory',
     };
     window.api.ipcRendererOnShowLicenseList(this.showLicenseList);
@@ -40,15 +49,20 @@ class RootDiv extends React.Component<{}, RootDivState> {
     const domToC = HTMLCreateTableOfContents(dom);
 
     this.setState({
-      htmlShowData: dom.body.innerHTML,
-      htmlShowTableOfContents: domToC.innerHTML,
+      htmlShowObject: {
+        Body: dom.body.innerHTML,
+        TableOfContents: domToC.innerHTML,
+      },
       showDiv: 'Html',
     });
   };
 
   changeDivToDirectory = () => {
     this.setState({
-      htmlShowData: '',
+      htmlShowObject : {
+        Body : "",
+        TableOfContents : "",
+      },
       showDiv: 'Directory',
     });
   };
@@ -58,7 +72,7 @@ class RootDiv extends React.Component<{}, RootDivState> {
   };
 
   render() {
-    const { htmlShowData, showDiv, htmlShowTableOfContents } = this.state;
+    const { showDiv, htmlShowObject } = this.state;
     const hiddenStyle: React.CSSProperties = {
       display: 'none',
     };
@@ -72,7 +86,7 @@ class RootDiv extends React.Component<{}, RootDivState> {
               <DirectoryShowDiv changeDivToHtml={this.changeDivToHtml} />
             </div>
             <div id="directory" style={showDiv !== 'Html' ? hiddenStyle : {}}>
-              <HtmlShowDiv html={htmlShowData} tableOfContents={htmlShowTableOfContents} />
+              <HtmlShowDiv html={htmlShowObject.Body} tableOfContents={htmlShowObject.TableOfContents} />
             </div>
           </div>
         </div>
