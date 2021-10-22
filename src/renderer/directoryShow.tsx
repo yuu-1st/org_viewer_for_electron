@@ -1,6 +1,6 @@
 import React from 'react';
-import { DefaultData, DirectoryData } from './../@types/connectionDataType';
-import { Button, ListGroup, ListGroupItem, Form } from 'react-bootstrap';
+import { DirectoryData } from './../@types/connectionDataType';
+import { ListGroup, ListGroupItem } from 'react-bootstrap';
 import { BookOpen, Edit, Folder } from 'react-feather';
 import { DeletePopup, ShowPopup, ShowTemporaryPopup } from './popup';
 
@@ -89,12 +89,13 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
                     style={paddingLeft}
                     onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
                   />
-                )) || (needTree && (
-                  <Folder
-                    style={paddingLeft}
-                    onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
-                  />
-                ))
+                )) ||
+                  (needTree && (
+                    <Folder
+                      style={paddingLeft}
+                      onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
+                    />
+                  ))
               }
               {dirList.name}
               {
@@ -115,211 +116,34 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
   }
 }
 
-interface DirectoryShowSelectFormProps {
-  dirName: string;
-  level: number;
-  isAll: boolean;
-  handleDirNameChange: (dirName: string) => void;
-  handleLevelChange: (level: number) => void;
-  handleIsAllChange: (isAll: boolean) => void;
-  handleFormSubmit: () => void;
-}
-
-/**
- * 画面上部に表示する入力フォームを表示を扱うクラス
- */
-class DirectoryShowSelectForm extends React.Component<DirectoryShowSelectFormProps, {}> {
-  constructor(props: DirectoryShowSelectFormProps) {
-    super(props);
-  }
-
-  /**
-   * ディレクトリ名が更新された時に、ベースクラスの更新関数を呼び出します。
-   * @param value
-   */
-  handleDirectoryOnChange = (value: string) => {
-    this.props.handleDirNameChange(value);
-  };
-
-  /**
-   * ディレクトリ階層数が更新された時に、ベースクラスの更新関数を呼び出します。
-   * @param value
-   */
-  handleLevelOnChange = (value: string) => {
-    this.props.handleLevelChange(Number(value));
-  };
-
-  /**
-   * is show allが更新された時に、ベースクラスの更新関数を呼び出します。
-   * @param value
-   */
-  handleIsAllOnChange = (value: boolean) => {
-    this.props.handleIsAllChange(value);
-  };
-
-  /**
-   * フォームの更新を反映します。
-   * @param event
-   */
-  handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    this.props.handleFormSubmit();
-  };
-
-  render() {
-    const { dirName, level, isAll } = this.props;
-    return (
-      <Form onSubmit={this.handleSubmit}>
-        <Form.Floating className="mb-3">
-          <Form.Control
-            id="directoryName"
-            type="text"
-            value={dirName}
-            onChange={(e) => this.handleDirectoryOnChange(e.target.value)}
-          />
-          <Form.Label htmlFor="directoryName">Directory:</Form.Label>
-        </Form.Floating>
-        <Form.Floating className="mb-3">
-          <Form.Control
-            type="number"
-            value={level}
-            id="directoryLevel"
-            onChange={(e) => this.handleLevelOnChange(e.target.value)}
-          />
-          <Form.Label htmlFor="directoryLevel">Directory Level:</Form.Label>
-        </Form.Floating>
-        <Form.Floating className="mb-3">
-          <Form.Label htmlFor="isShowAll">is show all:</Form.Label>
-          <Form.Check
-            type="checkbox"
-            checked={isAll}
-            id="isShowAll"
-            onChange={(e) => this.handleIsAllOnChange(e.target.checked)}
-          />
-        </Form.Floating>
-        <Button type="submit">Search</Button>
-        <br />
-      </Form>
-    );
-  }
-}
-
-interface DirectoryShowDivState {
-  /** ディレクトリ名 */
-  dirName: string;
-  /** ディレクトリ階層数 */
-  level: number;
-  /** ディレクトリ表示数 */
-  isAll: boolean;
+interface DirectoryShowDivProps {
   /** 表示するデータ情報 */
   dirLists: DirectoryData[] | null;
-}
-
-interface DirectoryShowDivProps {
+  /** 表示をhtmlに変更する関数 */
   changeDivToHtml: (html: string, dirName: string) => void;
+  /** リストに表示したディレクトリをクリックされた時に、表示するディレクトリ名およびリストを更新します。 */
+  handleClickDirectory: (dirName: string) => void;
 }
 
 /**
  * ベースとなる要素を扱うクラス
  */
-export class DirectoryShowDiv extends React.Component<
-  DirectoryShowDivProps,
-  DirectoryShowDivState
-> {
+export class DirectoryShowDiv extends React.Component<DirectoryShowDivProps, {}> {
   /**
    * コンストラクタ。メインプロセスからデフォルトデータを取得します。
    * @param props
    */
   constructor(props: DirectoryShowDivProps) {
     super(props);
-    this.setDefaultData();
-    this.state = {
-      dirName: '',
-      level: 1,
-      isAll: false,
-      dirLists: null,
-    };
   }
 
-  /**
-   * メインプロセスからデフォルトデータを取得し、stateに追加する。
-   */
-  setDefaultData = async () => {
-    const data: DefaultData = await window.api.getDefaultData();
-    this.setState({ dirName: data.HomeDir });
-    this.handleFormSubmit();
-    if (data.isUpdate && data.isUpdate.result === 'success') {
-      ShowPopup('アップデート情報', data.isUpdate.data ?? '', 'info', true);
-    }
-  };
-
-  /**
-   * フォームに表示する「ディレクトリ名」をステートにセットします
-   * @param dirName 表示するディレクトリ名
-   */
-  handleDirNameChange = (dirName: string) => {
-    this.setState({ dirName });
-  };
-
-  /**
-   * フォームに表示する「ディレクトリ階層数」をステートにセットします。
-   * @param level 表示するディレクトリ階層数
-   */
-  handleLevelChange = (level: number) => {
-    this.setState({ level });
-  };
-
-  /**
-   * フォームに表示する「全てのディレクトリを表示するか」をステートにセットします。
-   * @param isAll 全てのディレクトリを表示するか
-   */
-  handleIsAllChange = (isAll: boolean) => {
-    this.setState({ isAll });
-  };
-
-  /**
-   * ステートにセットされた値から、表示するディレクトリおよび階層数を更新し、描画します。
-   * @param dirNameLatest stateに頼らずに表示を更新する場合にのみ指定する。
-   */
-  handleFormSubmit = async (dirNameLatest: string | null = null) => {
-    let { dirName, level, isAll } = this.state;
-    if (dirNameLatest) {
-      // setStateがリアルタイムで反映されないため、関数を再利用するために引数でリアルタイム値を取得する
-      dirName = dirNameLatest;
-    }
-    const dirLists: DirectoryData[] | null = await window.api.getDirectoryList(dirName, level, isAll);
-    if (dirLists === null) {
-      ShowPopup('表示するディレクトリが存在しませんでした。', ' ', 'danger');
-    }
-    this.setState({ dirLists });
-  };
-
-  /**
-   * リストに表示したディレクトリをクリックされた時に、表示するディレクトリ名およびリストを更新します。
-   * @param dirName 表示先のディレクトリ名
-   */
-  handleClickDirectory = (dirName: string) => {
-    this.handleDirNameChange(dirName);
-    this.handleFormSubmit(dirName);
-  };
-
   render() {
-    const { dirName, level, dirLists, isAll } = this.state;
-    const { changeDivToHtml } = this.props;
+    const { dirLists, handleClickDirectory, changeDivToHtml } = this.props;
     return (
       <div>
-        <DirectoryShowSelectForm
-          dirName={dirName}
-          level={level}
-          isAll={isAll}
-          handleDirNameChange={this.handleDirNameChange}
-          handleLevelChange={this.handleLevelChange}
-          handleIsAllChange={this.handleIsAllChange}
-          handleFormSubmit={this.handleFormSubmit}
-        />
         <DirectoryShowListElement
           dirLists={dirLists}
-          handleClickDirectory={this.handleClickDirectory}
+          handleClickDirectory={handleClickDirectory}
           changeDivToHtml={changeDivToHtml}
         />
       </div>

@@ -7,7 +7,7 @@ import path from 'path';
  * @param event
  * @param dirPath 表示するディレクトリ。絶対パスもしくは相対パス
  * @param level 表示する階層数。1以上が必要です
- * @param isAll 全て表示するか。0の場合はorgファイルとディレクトリのみ、1の場合は隠しファイル以外、2は全てのファイルが表示されます。
+ * @param isAll 全て表示するか。1の場合はorgファイルとディレクトリのみ、2の場合は隠しファイル以外、3は全てのファイルが表示されます。
  * @returns
  */
 export const GetDirectoryList = async (
@@ -70,10 +70,10 @@ async function getLists(dirPath: string, level: number, isAll: number): Promise<
       } else if(getFileExtension(dir.name) === 'org'){
         // orgファイルの時
         isShow = true;
-      } else if(isAll === 1 && !dir.name.startsWith('.')){
+      } else if(isAll === 2 && !dir.name.startsWith('.')){
         // orgファイル以外で、.から始まらないファイルで、設定が1の時
         isShow = true;
-      } else if(isAll >= 2){
+      } else if(isAll >= 3){
         // 設定が2以上の時は全て通す
         isShow = true;
       }
