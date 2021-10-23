@@ -59,6 +59,20 @@ my_helpをGUIで操作するアプリケーション
 
 # Versions
 
+## v0.4.0
+
+- add features
+  - Added an item to display all files. This is because I have hidden all but the main files.
+  - Added a list that allows you move up to higher level directory.
+  - Added the ability to create new files.
+
+- changes
+  - Moved the edit and view buttons forward.
+  - Change layout
+  
+- others
+  - Package changed from x86_64 to Universal. and fix #1
+
 ## v0.3.0
 
 - add features
