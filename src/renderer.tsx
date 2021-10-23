@@ -109,7 +109,7 @@ class RootDiv extends React.Component<{}, RootDivState> {
    */
   setDefaultData = async () => {
     const data: DefaultData = await window.api.getDefaultData();
-    this.updateDirectoryShowObject(data.HomeDir,null,null);
+    this.updateDirectoryShowObject(data.HomeDir, null, null);
     if (data.isUpdate && data.isUpdate.result === 'success') {
       ShowPopup('アップデート情報', data.isUpdate.data ?? '', 'info', true);
     }
@@ -137,13 +137,13 @@ class RootDiv extends React.Component<{}, RootDivState> {
     newIsAll: number | null
   ) => {
     let { directoryShowObject } = this.state;
-    if(newDirName){
+    if (newDirName) {
       directoryShowObject.dirName = newDirName;
     }
-    if(newLevel){
+    if (newLevel) {
       directoryShowObject.level = newLevel;
     }
-    if(newIsAll){
+    if (newIsAll) {
       directoryShowObject.isAll = newIsAll;
     }
     const dirLists: DirectoryData[] | null = await window.api.getDirectoryList(
@@ -163,7 +163,7 @@ class RootDiv extends React.Component<{}, RootDivState> {
    * @param dirName 表示先のディレクトリ名
    */
   handleClickDirectory = (dirName: string) => {
-    this.updateDirectoryShowObject(dirName,null,null);
+    this.updateDirectoryShowObject(dirName, null, null);
   };
 
   render() {
@@ -191,6 +191,8 @@ class RootDiv extends React.Component<{}, RootDivState> {
                 dirLists={directoryShowObject.dirLists}
                 handleClickDirectory={this.handleClickDirectory}
                 changeDivToHtml={this.changeDivToHtml}
+                directory={directoryShowObject.dirName}
+                updateDirectoryShowObject={this.updateDirectoryShowObject}
               />
             </div>
             <div id="directory" style={showDiv !== 'Html' ? hiddenStyle : {}}>

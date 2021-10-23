@@ -7,7 +7,7 @@ import { FileChangeFromOrgToHTML } from './main/FileChangeFromOrgToHTML';
 import { PathChangeFromRelativeToAbsolute } from './main/PathChangeFromRelativeToAbsolute';
 import { GetDefaultData } from './main/GetDefaultData';
 import { UpdateMenuBar } from './main/MenuBarController';
-
+import { FileOperating_CreateNewFile } from './main/FileOperating';
 
 const extPath =
   os.platform() === 'darwin'
@@ -49,7 +49,6 @@ const createWindow = () => {
 
   // メニューバーを表示する
   UpdateMenuBar(mainWindow);
-
 };
 
 /**
@@ -76,7 +75,6 @@ app.whenReady().then(async () => {
 
 // すべてのウィンドウが閉じられたらアプリを終了する
 app.once('window-all-closed', () => app.quit());
-
 
 //******************************************************
 // レンダープロセスと通信するイベント群
@@ -106,3 +104,8 @@ ipcMain.handle('fileChangeFromOrgToHTML', FileChangeFromOrgToHTML);
  * 相対パスを絶対パスに修正します。
  */
 ipcMain.handle('pathChangeFromRelativeToAbsolute', PathChangeFromRelativeToAbsolute);
+
+/**
+ * 新規ファイルを作成します。
+ */
+ipcMain.handle('FileOperating_CreateNewFile', FileOperating_CreateNewFile);

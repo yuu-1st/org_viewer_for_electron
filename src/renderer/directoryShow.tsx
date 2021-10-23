@@ -1,7 +1,7 @@
 import React from 'react';
 import { DirectoryData } from './../@types/connectionDataType';
-import { ListGroup, ListGroupItem } from 'react-bootstrap';
-import { BookOpen, Edit, Folder } from 'react-feather';
+import { Button, ListGroup, ListGroupItem, Modal } from 'react-bootstrap';
+import { BookOpen, Edit, FilePlus, Folder } from 'react-feather';
 import { DeletePopup, ShowPopup, ShowTemporaryPopup } from './popup';
 
 interface DirectoryShowListElementProps {
@@ -116,6 +116,121 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
   }
 }
 
+interface FileOperationIconProps {
+  directory: string;
+
+  updateDirectoryShowObject: (
+    newDirName: string | null,
+    newLevel: number | null,
+    newIsAll: number | null
+  ) => void;
+}
+
+interface FileOperationIconStates {
+  isModalOpen: boolean;
+  newFileName: string;
+  newFileError: string;
+}
+
+class FileOperationIcon extends React.Component<FileOperationIconProps, FileOperationIconStates> {
+  /**
+   * コンストラクタ。
+   * @param props
+   */
+  constructor(props: FileOperationIconProps) {
+    super(props);
+    this.state = {
+      isModalOpen: false,
+      newFileName: '',
+      newFileError: '',
+    };
+  }
+
+  openModal = () => {
+    this.setState({ isModalOpen: true, newFileName: '', newFileError: '' });
+  };
+
+  afterOpenModal = () => {
+    // references are now sync'd and can be accessed.
+    // subtitle.style.color = '#f00';
+  };
+
+  closeModal = () => {
+    this.setState({ isModalOpen: false });
+  };
+
+  handleNewFileModalInputOnChange = (newFileName: string) => {
+    this.setState({ newFileName });
+  };
+
+  handleNewFileModalOnCreateDown = async () => {
+    const { directory, updateDirectoryShowObject } = this.props;
+    const { newFileName } = this.state;
+    let error = '';
+    if (newFileName.length === 0) {
+      error = 'ファイル名は1文字以上必要です';
+    } else {
+      const result = await window.api.FileOperating_CreateNewFile(newFileName, directory);
+      if (result.result === 'success') {
+        ShowPopup('ファイル作成に成功しました。', newFileName, 'success');
+        updateDirectoryShowObject(null, null, null);
+      } else {
+        if (result.data === 'already exist.') {
+          error = '該当のファイル名は既に存在しています。';
+        } else if (result.data === 'Contains characters that cannot be used.') {
+          error = 'ファイルに使用できない文字が含まれています。';
+        } else {
+          error = result.data;
+        }
+      }
+    }
+
+    if (error.length === 0) {
+      this.closeModal();
+    }
+    this.setState({ newFileError: error });
+  };
+
+  render() {
+    const { isModalOpen, newFileName, newFileError } = this.state;
+    return (
+      <>
+        <div id="iconLists" className="d-flex flex-row my-3">
+          <div id="newFile" className="d-flex flex-row m-1" onClick={this.openModal}>
+            <FilePlus />
+            New File
+          </div>
+          <Modal show={isModalOpen} onHide={this.closeModal}>
+            <Modal.Header closeButton>
+              <Modal.Title>新規ファイル作成</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="text-danger">{newFileError}</div>
+              <div className="m-1 flex-grow-1 d-flex flex-row">
+                <input
+                  className="flex-grow-1"
+                  type="text"
+                  value={newFileName}
+                  onChange={(e) => this.handleNewFileModalInputOnChange(e.target.value)}
+                />
+                <div className="m-1">.org</div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={this.closeModal}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={this.handleNewFileModalOnCreateDown}>
+                作成
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+      </>
+    );
+  }
+}
+
 interface DirectoryShowDivProps {
   /** 表示するデータ情報 */
   dirLists: DirectoryData[] | null;
@@ -123,6 +238,14 @@ interface DirectoryShowDivProps {
   changeDivToHtml: (html: string, dirName: string) => void;
   /** リストに表示したディレクトリをクリックされた時に、表示するディレクトリ名およびリストを更新します。 */
   handleClickDirectory: (dirName: string) => void;
+
+  directory: string;
+
+  updateDirectoryShowObject: (
+    newDirName: string | null,
+    newLevel: number | null,
+    newIsAll: number | null
+  ) => void;
 }
 
 /**
@@ -138,9 +261,19 @@ export class DirectoryShowDiv extends React.Component<DirectoryShowDivProps, {}>
   }
 
   render() {
-    const { dirLists, handleClickDirectory, changeDivToHtml } = this.props;
+    const {
+      dirLists,
+      handleClickDirectory,
+      changeDivToHtml,
+      directory,
+      updateDirectoryShowObject,
+    } = this.props;
     return (
       <div>
+        <FileOperationIcon
+          directory={directory}
+          updateDirectoryShowObject={updateDirectoryShowObject}
+        />
         <DirectoryShowListElement
           dirLists={dirLists}
           handleClickDirectory={handleClickDirectory}

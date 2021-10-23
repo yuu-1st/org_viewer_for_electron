@@ -3,6 +3,7 @@
 import {
   fileChangeFromOrgToHTML,
   fileOpenToEmacs,
+  FileOperating_CreateNewFile,
   getDefaultData,
   getDirectoryList,
   ipcRendererOnShowLicenseList,
@@ -16,6 +17,7 @@ export default interface Api {
   fileChangeFromOrgToHTML: typeof fileChangeFromOrgToHTML;
   pathChangeFromRelativeToAbsolute: typeof pathChangeFromRelativeToAbsolute;
   ipcRendererOnShowLicenseList: typeof ipcRendererOnShowLicenseList;
+  FileOperating_CreateNewFile: typeof FileOperating_CreateNewFile;
 }
 
 // global の名前空間にある定義を上書き

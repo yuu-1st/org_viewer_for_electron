@@ -4,13 +4,13 @@ import { ApiResultData, DefaultData, DirectoryData } from './@types/connectionDa
 export async function getDirectoryList(
   dirName: string,
   dirLevel: number,
-  isAll: number,
+  isAll: number
 ): Promise<DirectoryData[] | null> {
   const DirList: DirectoryData[] | null = await ipcRenderer.invoke(
     'getDirectoryList',
     dirName,
     dirLevel,
-    isAll,
+    isAll
   );
   return DirList;
 }
@@ -42,6 +42,18 @@ export async function pathChangeFromRelativeToAbsolute(
   return Message;
 }
 
+export async function FileOperating_CreateNewFile(
+  filename: string,
+  directory: string
+): Promise<ApiResultData> {
+  const Message: ApiResultData = await ipcRenderer.invoke(
+    'FileOperating_CreateNewFile',
+    filename,
+    directory
+  );
+  return Message;
+}
+
 /**
  * メインプロセスから呼び出した時に呼び出す関数を登録する関数
  * @param callback
@@ -59,4 +71,5 @@ contextBridge.exposeInMainWorld('api', {
   fileChangeFromOrgToHTML: fileChangeFromOrgToHTML,
   pathChangeFromRelativeToAbsolute: pathChangeFromRelativeToAbsolute,
   ipcRendererOnShowLicenseList: ipcRendererOnShowLicenseList,
+  FileOperating_CreateNewFile,
 });
