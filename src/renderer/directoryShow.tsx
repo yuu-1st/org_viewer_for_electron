@@ -36,6 +36,11 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
     }
   };
 
+  /**
+   * 選択されたorgファイルをHTMLに変換して表示します。
+   * @param dirName
+   * @param extension
+   */
   openView = async (dirName: string, extension: string | null) => {
     if (extension === 'org') {
       const popId = ShowTemporaryPopup('実行中…', 'orgファイルを開いています。', 'default');
@@ -116,6 +121,9 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
   }
 }
 
+//**************************************************************************************************************
+//**************************************************************************************************************
+
 interface FileOperationIconProps {
   directory: string;
 
@@ -127,11 +135,15 @@ interface FileOperationIconProps {
 }
 
 interface FileOperationIconStates {
-  isModalOpen: boolean;
+  /** どのModal windowが開いているか。全て閉じている場合はnull */
+  isModalOpen: null | 'NewFile';
   newFileName: string;
-  newFileError: string;
+  newModalError: string;
 }
 
+/**
+ * ファイル操作関係のアイコンを設置するコンポーネント
+ */
 class FileOperationIcon extends React.Component<FileOperationIconProps, FileOperationIconStates> {
   /**
    * コンストラクタ。
@@ -140,30 +152,40 @@ class FileOperationIcon extends React.Component<FileOperationIconProps, FileOper
   constructor(props: FileOperationIconProps) {
     super(props);
     this.state = {
-      isModalOpen: false,
+      isModalOpen: null,
       newFileName: '',
-      newFileError: '',
+      newModalError: '',
     };
   }
 
-  openModal = () => {
-    this.setState({ isModalOpen: true, newFileName: '', newFileError: '' });
+  /**
+   * NewFileのModalを表示します
+   */
+  openNewFileModal = () => {
+    this.setState({ isModalOpen: 'NewFile', newFileName: '', newModalError: '' });
   };
 
-  afterOpenModal = () => {
-    // references are now sync'd and can be accessed.
-    // subtitle.style.color = '#f00';
-  };
-
+  /**
+   * 全てのModal windowを閉じます
+   */
   closeModal = () => {
-    this.setState({ isModalOpen: false });
+    console.log('close');
+    this.setState({ isModalOpen: null });
   };
 
+  /**
+   * NewFileのModalで、入力されたファイル名を取得/セットします。
+   * @param newFileName
+   */
   handleNewFileModalInputOnChange = (newFileName: string) => {
     this.setState({ newFileName });
   };
 
+  /**
+   * NewFileのModalで、作成ボタンを押された時に、エラーもしくは成功を表示します。
+   */
   handleNewFileModalOnCreateDown = async () => {
+    console.log('create');
     const { directory, updateDirectoryShowObject } = this.props;
     const { newFileName } = this.state;
     let error = '';
@@ -184,52 +206,55 @@ class FileOperationIcon extends React.Component<FileOperationIconProps, FileOper
         }
       }
     }
-
     if (error.length === 0) {
       this.closeModal();
     }
-    this.setState({ newFileError: error });
+    this.setState({ newModalError: error });
   };
 
   render() {
-    const { isModalOpen, newFileName, newFileError } = this.state;
+    const { isModalOpen, newFileName, newModalError } = this.state;
     return (
       <>
         <div id="iconLists" className="d-flex flex-row my-3">
-          <div id="newFile" className="d-flex flex-row m-1" onClick={this.openModal}>
+          <div id="newFile" className="d-flex flex-row m-1" onClick={this.openNewFileModal}>
             <FilePlus />
             New File
           </div>
-          <Modal show={isModalOpen} onHide={this.closeModal}>
-            <Modal.Header closeButton>
-              <Modal.Title>新規ファイル作成</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <div className="text-danger">{newFileError}</div>
-              <div className="m-1 flex-grow-1 d-flex flex-row">
-                <input
-                  className="flex-grow-1"
-                  type="text"
-                  value={newFileName}
-                  onChange={(e) => this.handleNewFileModalInputOnChange(e.target.value)}
-                />
-                <div className="m-1">.org</div>
-              </div>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={this.closeModal}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={this.handleNewFileModalOnCreateDown}>
-                作成
-              </Button>
-            </Modal.Footer>
-          </Modal>
+            <Modal show={(isModalOpen === 'NewFile')} onHide={this.closeModal}>
+              <Modal.Header closeButton>
+                <Modal.Title>新規ファイル作成</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="text-danger">{newModalError}</div>
+                <div className="m-1 flex-grow-1 d-flex flex-row">
+                  <input
+                    className="flex-grow-1"
+                    type="text"
+                    value={newFileName}
+                    onChange={(e) => this.handleNewFileModalInputOnChange(e.target.value)}
+                  />
+                  <div className="m-1">.org</div>
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={this.closeModal}>
+                  Close
+                </Button>
+                <Button variant="primary" onClick={this.handleNewFileModalOnCreateDown}>
+                  作成
+                </Button>
+              </Modal.Footer>
+            </Modal>
         </div>
       </>
     );
   }
 }
+
+//**************************************************************************************************************
+//**************************************************************************************************************
+
 
 interface DirectoryShowDivProps {
   /** 表示するデータ情報 */
@@ -238,9 +263,9 @@ interface DirectoryShowDivProps {
   changeDivToHtml: (html: string, dirName: string) => void;
   /** リストに表示したディレクトリをクリックされた時に、表示するディレクトリ名およびリストを更新します。 */
   handleClickDirectory: (dirName: string) => void;
-
+  /** 現在表示しているディレクトリ */
   directory: string;
-
+  /** ディレクトリ表示を更新するクラスです */
   updateDirectoryShowObject: (
     newDirName: string | null,
     newLevel: number | null,
