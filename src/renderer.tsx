@@ -2,6 +2,8 @@ import 'react-notifications-component/dist/theme.css';
 import 'animate.css/animate.min.css';
 import './renderer.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'prismjs/themes/prism-tomorrow.css';
+import 'prismjs/plugins/toolbar/prism-toolbar.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
