@@ -31,6 +31,7 @@ export class HtmlShowDiv extends React.Component<HtmlShowDivProps, {}> {
     // You can call the Prism.js API here
     // Use setTimeout to push onto callback queue so it runs after the DOM is updated
     setTimeout(() => Prism.highlightAll(), 0);
+    document.getElementById('htmlShow_body')?.scroll(0, 0);
   }
 
   render() {
