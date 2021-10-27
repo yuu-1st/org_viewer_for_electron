@@ -104,9 +104,9 @@ export class OverMenuBar extends React.Component<OverMenuBarProps, OverMenuBarSt
 
   render() {
     const { type, changeDivToDirectory, dirName, level, isAll, nowShowingFileName } = this.props;
-    const styleMenuBarHeight :React.CSSProperties = {
-      height : '40px',
-    }
+    const styleMenuBarHeight: React.CSSProperties = {
+      height: '40px',
+    };
     return (
       <div className="">
         <div
@@ -148,9 +148,9 @@ export class OverMenuBar extends React.Component<OverMenuBarProps, OverMenuBarSt
                   onChange={(e) => this.handleIsAllChange(e.target.value)}
                   defaultValue={isAll.toString()}
                 >
-                  <option value="1">org only</option>
-                  <option value="2">main dir</option>
-                  <option value="3">all dir</option>
+                  <option value="1">Org files only</option>
+                  <option value="2">With other files</option>
+                  <option value="3">With dot files</option>
                 </select>
               </div>
             </>
