@@ -45,6 +45,8 @@ my_helpをGUIで操作するアプリケーション
 
 # Install
 
+※インストールする前にsettingsを事前に完了する必要があります。
+
 ## github
 
 - 右上「Releases」より、最新版のdmgファイルもしくはexeファイルをダウンロードします。
@@ -59,6 +61,16 @@ my_helpをGUIで操作するアプリケーション
 
 # Versions
 
+## v0.5.0
+
+- changes
+  - When displaying HTML, the code blocks are colored. Currently only css, diff, http, js, jsx, markup, python, ruby, sql, ts, tsx, are supported.
+  - The English notation has been partially revised.
+
+- known issue
+  - HTML tag "a" does not work.
+  - If you scroll and close a document, scrolling will continue when you open another document.
+
 ## v0.4.0
 
 - add features
@@ -69,7 +81,7 @@ my_helpをGUIで操作するアプリケーション
 - changes
   - Moved the edit and view buttons forward.
   - Change layout
-  
+
 - others
   - Package changed from x86_64 to Universal. and fix #1
 
