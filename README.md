@@ -49,7 +49,7 @@ my_helpをGUIで操作するアプリケーション
 
 ## github
 
-- 右上「Releases」より、最新版のdmgファイルもしくはexeファイルをダウンロードします。
+- 右上「[Releases](https://github.com/yuu-1st/org_viewer_for_electron/releases)」より、最新版のdmgファイルもしくはexeファイルをダウンロードします。
 
 - インストール後、Applicationディレクトリにアプリを移動させます。
 
