@@ -1,7 +1,7 @@
 import React from 'react';
 import { DirectoryData } from './../@types/connectionDataType';
 import { Button, ListGroup, ListGroupItem, Modal } from 'react-bootstrap';
-import { BookOpen, Edit, FilePlus, Folder } from 'react-feather';
+import { BookOpen, Edit, Edit2, FilePlus, Folder, Tool, Trash2 } from 'react-feather';
 import { DeletePopup, ShowPopup, ShowTemporaryPopup } from './popup';
 
 interface DirectoryShowListElementProps {
@@ -9,6 +9,10 @@ interface DirectoryShowListElementProps {
   dirLists: DirectoryData[] | null;
   handleClickDirectory: (dirName: string) => void;
   changeDivToHtml: (html: string, dirName: string) => void;
+
+  isEditButtonDown: boolean;
+
+  openDeleteFileModal: (showFileName: string, deleteFullPath: string) => void;
 }
 
 /**
@@ -57,12 +61,16 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
   };
 
   render() {
-    const { dirLists, handleClickDirectory, changeDivToHtml } = this.props;
-    const paddingLeft: React.CSSProperties = {
-      marginLeft: 15,
-      marginRight: 15,
-    };
+    const {
+      dirLists,
+      handleClickDirectory,
+      changeDivToHtml,
+      isEditButtonDown,
+      openDeleteFileModal,
+    } = this.props;
+
     if (dirLists === null) return null;
+
     return (
       <ListGroup>
         {dirLists.map((dirList, i) => {
@@ -78,30 +86,52 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
           }
           return (
             <ListGroupItem key={dirList.name} style={colorStyle}>
-              {
-                /** orgファイルであれば編集ボタンを表示する */
-                dirList.extension === 'org' && (
-                  <Edit
-                    style={paddingLeft}
-                    onClick={(e) => this.openFile(dirList.rootPath, dirList.extension)}
-                  />
-                )
-              }
-              {
-                /** orgファイルかディレクトリであれば開くボタンを表示する */
-                (dirList.extension === 'org' && (
-                  <BookOpen
-                    style={paddingLeft}
-                    onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
-                  />
-                )) ||
-                  (needTree && (
-                    <Folder
-                      style={paddingLeft}
-                      onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
-                    />
-                  ))
-              }
+              {((): JSX.Element | undefined => {
+                /* 手前にボタンを設置する場合 */
+                if (isEditButtonDown) {
+                  if (dirList.extension === 'org') {
+                    /* orgファイルであれば編集ボタンと開くボタンを表示する */
+                    return (
+                      <>
+                        <Trash2
+                          className="mx-3"
+                          onClick={(e) => openDeleteFileModal(dirList.name, dirList.rootPath)}
+                        />
+                        <Edit2
+                          className="mx-3"
+                          onClick={(e) => ShowPopup('この機能は実装されていません。', ' ', 'danger')} // とりあえず。
+                        />
+                      </>
+                    );
+                  }
+                } else {
+                  if (dirList.extension === 'org') {
+                    /* orgファイルであれば編集ボタンと開くボタンを表示する */
+                    return (
+                      <>
+                        <Edit
+                          className="mx-3"
+                          onClick={(e) => this.openFile(dirList.rootPath, dirList.extension)}
+                        />{' '}
+                        <BookOpen
+                          className="mx-3"
+                          onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
+                        />
+                      </>
+                    );
+                  } else if (needTree) {
+                    /* ディレクトリであれば開くボタンを表示する */
+                    return (
+                      <>
+                        <Folder
+                          className="mx-3"
+                          onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
+                        />
+                      </>
+                    );
+                  }
+                }
+              })()}
               {dirList.name}
               {
                 /* ディレクトリであれば再帰的に表示する */
@@ -110,6 +140,8 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
                     dirLists={dirList.subDirectory}
                     handleClickDirectory={handleClickDirectory}
                     changeDivToHtml={changeDivToHtml}
+                    isEditButtonDown={isEditButtonDown}
+                    openDeleteFileModal={openDeleteFileModal}
                   />
                 )
               }
@@ -132,6 +164,10 @@ interface FileOperationIconProps {
     newLevel: number | null,
     newIsAll: number | null
   ) => void;
+
+  isEditButtonDown: boolean;
+
+  changeIsEditButtonDown: () => void;
 }
 
 interface FileOperationIconStates {
@@ -169,7 +205,6 @@ class FileOperationIcon extends React.Component<FileOperationIconProps, FileOper
    * 全てのModal windowを閉じます
    */
   closeModal = () => {
-    console.log('close');
     this.setState({ isModalOpen: null });
   };
 
@@ -213,15 +248,29 @@ class FileOperationIcon extends React.Component<FileOperationIconProps, FileOper
   };
 
   render() {
+    const { changeIsEditButtonDown, isEditButtonDown } = this.props;
     const { isModalOpen, newFileName, newModalError } = this.state;
-    return (
-      <>
-        <div id="iconLists" className="d-flex flex-row my-3">
-          <div id="newFile" className="d-flex flex-row m-1" onClick={this.openNewFileModal}>
-            <FilePlus />
-            New File
+    // エディトボタンが押されているかどうかで条件分岐。する意味は果たしてあったのか
+    if (isEditButtonDown) {
+      return (
+        <>
+          <div id="iconLists" className="d-flex flex-row my-3">
+            <div id="editFile" className="d-flex flex-row m-1" onClick={changeIsEditButtonDown}>
+              <Tool className="me-1" />
+              Edit End
+            </div>
           </div>
-            <Modal show={(isModalOpen === 'NewFile')} onHide={this.closeModal}>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <div id="iconLists" className="d-flex flex-row my-3">
+            <div id="newFile" className="d-flex flex-row m-1" onClick={this.openNewFileModal}>
+              <FilePlus className="me-1" />
+              New File
+            </div>
+            <Modal show={isModalOpen === 'NewFile'} onHide={this.closeModal}>
               <Modal.Header closeButton>
                 <Modal.Title>新規ファイル作成</Modal.Title>
               </Modal.Header>
@@ -246,15 +295,19 @@ class FileOperationIcon extends React.Component<FileOperationIconProps, FileOper
                 </Button>
               </Modal.Footer>
             </Modal>
-        </div>
-      </>
-    );
+            <div id="editFile" className="d-flex flex-row m-1" onClick={changeIsEditButtonDown}>
+              <Tool className="me-1" />
+              Edit File
+            </div>
+          </div>
+        </>
+      );
+    }
   }
 }
 
 //**************************************************************************************************************
 //**************************************************************************************************************
-
 
 interface DirectoryShowDivProps {
   /** 表示するデータ情報 */
@@ -273,17 +326,89 @@ interface DirectoryShowDivProps {
   ) => void;
 }
 
+interface DirectoryShowDivState {
+  /** 編集ボタンが押されているか */
+  isEditButtonDown: boolean;
+  /** どのModal windowが開いているか。全て閉じている場合はnull */
+  isModalOpen: null | 'EditFileName' | 'DeleteFile';
+  ModalFileName: string;
+  ModalFullPath: string;
+  ModalError: string;
+}
+
 /**
  * ベースとなる要素を扱うクラス
  */
-export class DirectoryShowDiv extends React.Component<DirectoryShowDivProps, {}> {
+export class DirectoryShowDiv extends React.Component<
+  DirectoryShowDivProps,
+  DirectoryShowDivState
+> {
   /**
    * コンストラクタ。メインプロセスからデフォルトデータを取得します。
    * @param props
    */
   constructor(props: DirectoryShowDivProps) {
     super(props);
+    this.state = {
+      isEditButtonDown: false,
+      isModalOpen: null,
+      ModalFileName: '',
+      ModalFullPath: '',
+      ModalError: '',
+    };
   }
+
+  /**
+   * state "isEditButtonDown" を反転させます。
+   */
+  changeIsEditButtonDown = () => {
+    const { isEditButtonDown } = this.state;
+    this.setState({ isEditButtonDown: !isEditButtonDown });
+  };
+
+  /**
+   * DeleteFileのModalを表示します
+   */
+  openDeleteFileModal = (showFileName: string, deleteFullPath: string) => {
+    this.setState({
+      isModalOpen: 'DeleteFile',
+      ModalFileName: showFileName,
+      ModalFullPath: deleteFullPath,
+      ModalError: '',
+    });
+  };
+
+  /**
+   * 全てのModal windowを閉じます
+   */
+  closeModal = () => {
+    this.setState({ isModalOpen: null });
+  };
+
+  /**
+   * NewFileのModalで、入力されたファイル名を取得/セットします。
+   * @param newFileName
+   */
+  // handleNewFileModalInputOnChange = (newFileName: string) => {
+  //   this.setState({ ModalFileName: newFileName });
+  // };
+
+  handleDeleteButtonDown = async () => {
+    const { updateDirectoryShowObject } = this.props;
+    const { ModalFullPath } = this.state;
+    let error = '';
+    const result = await window.api.FileOperating_DeleteFile(ModalFullPath);
+    if (result.result === 'success') {
+      ShowPopup('ファイルを削除しました。', ModalFullPath, 'success');
+      updateDirectoryShowObject(null, null, null);
+    } else {
+      error = result.data;
+    }
+    if (error.length === 0) {
+      this.closeModal();
+    }
+    this.setState({ ModalError: error });
+  };
 
   render() {
     const {
@@ -293,17 +418,43 @@ export class DirectoryShowDiv extends React.Component<DirectoryShowDivProps, {}>
       directory,
       updateDirectoryShowObject,
     } = this.props;
+    const { isEditButtonDown, isModalOpen, ModalFileName, ModalError } = this.state;
+
     return (
       <div>
         <FileOperationIcon
           directory={directory}
           updateDirectoryShowObject={updateDirectoryShowObject}
+          isEditButtonDown={isEditButtonDown}
+          changeIsEditButtonDown={this.changeIsEditButtonDown}
         />
         <DirectoryShowListElement
           dirLists={dirLists}
           handleClickDirectory={handleClickDirectory}
           changeDivToHtml={changeDivToHtml}
+          isEditButtonDown={isEditButtonDown}
+          openDeleteFileModal={this.openDeleteFileModal}
         />
+        <Modal show={isModalOpen === 'DeleteFile'} onHide={this.closeModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>ファイル削除</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="text-danger">{ModalError}</div>
+            <div className="m-1 flex-grow-1 d-flex flex-row">
+              「{ModalFileName}」を削除しますか？<br/>
+              ※一度削除すると元に戻すことは出来ません。
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={this.closeModal}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={this.handleDeleteButtonDown}>
+              削除
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     );
   }

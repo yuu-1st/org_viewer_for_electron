@@ -54,6 +54,16 @@ export async function FileOperating_CreateNewFile(
   return Message;
 }
 
+export async function FileOperating_DeleteFile(
+  fullPath: string,
+): Promise<ApiResultData> {
+  const Message: ApiResultData = await ipcRenderer.invoke(
+    'FileOperating_DeleteFile',
+    fullPath,
+  );
+  return Message;
+}
+
 /**
  * メインプロセスから呼び出した時に呼び出す関数を登録する関数
  * @param callback
@@ -72,4 +82,5 @@ contextBridge.exposeInMainWorld('api', {
   pathChangeFromRelativeToAbsolute: pathChangeFromRelativeToAbsolute,
   ipcRendererOnShowLicenseList: ipcRendererOnShowLicenseList,
   FileOperating_CreateNewFile,
+  FileOperating_DeleteFile,
 });

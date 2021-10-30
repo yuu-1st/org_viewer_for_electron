@@ -7,7 +7,7 @@ import { FileChangeFromOrgToHTML } from './main/FileChangeFromOrgToHTML';
 import { PathChangeFromRelativeToAbsolute } from './main/PathChangeFromRelativeToAbsolute';
 import { GetDefaultData } from './main/GetDefaultData';
 import { UpdateMenuBar } from './main/MenuBarController';
-import { FileOperating_CreateNewFile } from './main/FileOperating';
+import { FileOperating_CreateNewFile, FileOperating_DeleteFile } from './main/FileOperating';
 
 const extPath =
   os.platform() === 'darwin'
@@ -109,3 +109,8 @@ ipcMain.handle('pathChangeFromRelativeToAbsolute', PathChangeFromRelativeToAbsol
  * 新規ファイルを作成します。
  */
 ipcMain.handle('FileOperating_CreateNewFile', FileOperating_CreateNewFile);
+
+/**
+ * 既存ファイルを削除します。
+ */
+ ipcMain.handle('FileOperating_DeleteFile', FileOperating_DeleteFile);
