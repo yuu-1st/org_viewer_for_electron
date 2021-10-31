@@ -116,7 +116,7 @@ export class OverMenuBar extends React.Component<OverMenuBarProps, OverMenuBarSt
           {type === 'Html' && (
             <>
               <ArrowLeft style={{ height: '25px' }} onClick={changeDivToDirectory} />
-              <div className="m-1 flex-grow-1 text-end">{nowShowingFileName}</div>
+              <div className="m-1 flex-grow-1 text-end overflow-scroll">{nowShowingFileName}</div>
             </>
           )}
           {type === 'Directory' && (
