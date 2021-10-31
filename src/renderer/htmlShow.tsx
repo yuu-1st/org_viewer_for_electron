@@ -28,10 +28,27 @@ export class HtmlShowDiv extends React.Component<HtmlShowDivProps, {}> {
   }
 
   componentDidUpdate() {
-    // You can call the Prism.js API here
-    // Use setTimeout to push onto callback queue so it runs after the DOM is updated
-    setTimeout(() => Prism.highlightAll(), 0);
-    document.getElementById('htmlShow_body')?.scroll(0, 0);
+    const { html, tableOfContents } = this.props;
+    // htmlを表示する時だけ実行する
+    if(html.length > 0){
+      // You can call the Prism.js API here
+      // Use setTimeout to push onto callback queue so it runs after the DOM is updated
+      setTimeout(() => Prism.highlightAll(), 0);
+      document.getElementById('htmlShow_body')?.scroll(0, 0);
+      document.querySelectorAll<HTMLElement>('a[data-openurl]').forEach(e => {
+        e.addEventListener('click', this.handleOpenUrl);
+      });
+    }
+  }
+
+  handleOpenUrl = (me: MouseEvent) :any => {
+    const elem = me.currentTarget;
+    if(elem instanceof HTMLElement){
+      const url = elem.dataset.openurl;
+      if(url){
+        window.api.OpenHTML(url);
+      }
+    }
   }
 
   render() {

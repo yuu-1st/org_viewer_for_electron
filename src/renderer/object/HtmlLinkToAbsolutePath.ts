@@ -12,7 +12,7 @@ export async function HtmlLinkToAbsolutePath(dom: Document, dirPath: string): Pr
     ...hasHref.map(async (a: any) => {
       // HTMLElementだと何してもa.hrefがエラー出たのでany
       if ('href' in a) {
-        // a.href = await window.api.pathChangeFromRelativeToAbsolute(a.getAttribute('href'),dirPath); // ←後にこちらにする。
+        a.dataset.openurl = await window.api.pathChangeFromRelativeToAbsolute(a.getAttribute('href'),dirPath);
         a.href = 'javascript:void(0)';
       }
     })

@@ -54,14 +54,13 @@ export async function FileOperating_CreateNewFile(
   return Message;
 }
 
-export async function FileOperating_DeleteFile(
-  fullPath: string,
-): Promise<ApiResultData> {
-  const Message: ApiResultData = await ipcRenderer.invoke(
-    'FileOperating_DeleteFile',
-    fullPath,
-  );
+export async function FileOperating_DeleteFile(fullPath: string): Promise<ApiResultData> {
+  const Message: ApiResultData = await ipcRenderer.invoke('FileOperating_DeleteFile', fullPath);
   return Message;
+}
+
+export async function OpenHTML(link: string): Promise<void> {
+  await ipcRenderer.invoke('OpenHTML', link);
 }
 
 /**
@@ -83,4 +82,5 @@ contextBridge.exposeInMainWorld('api', {
   ipcRendererOnShowLicenseList: ipcRendererOnShowLicenseList,
   FileOperating_CreateNewFile,
   FileOperating_DeleteFile,
+  OpenHTML,
 });

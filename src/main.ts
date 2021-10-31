@@ -8,6 +8,7 @@ import { PathChangeFromRelativeToAbsolute } from './main/PathChangeFromRelativeT
 import { GetDefaultData } from './main/GetDefaultData';
 import { UpdateMenuBar } from './main/MenuBarController';
 import { FileOperating_CreateNewFile, FileOperating_DeleteFile } from './main/FileOperating';
+import { OpenHTML } from './main/OpenHTML';
 
 const extPath =
   os.platform() === 'darwin'
@@ -113,4 +114,9 @@ ipcMain.handle('FileOperating_CreateNewFile', FileOperating_CreateNewFile);
 /**
  * 既存ファイルを削除します。
  */
- ipcMain.handle('FileOperating_DeleteFile', FileOperating_DeleteFile);
+ipcMain.handle('FileOperating_DeleteFile', FileOperating_DeleteFile);
+
+/**
+ * Linkを開きます。
+ */
+ipcMain.handle('OpenHTML', OpenHTML);

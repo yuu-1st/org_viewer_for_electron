@@ -18,9 +18,10 @@ export const PathChangeFromRelativeToAbsolute = (
     // 要素がhttpもしくはhttpsから始まるとき
   } else if (path.isAbsolute(changePath)) {
     // 要素が絶対パスで書かれている時
+    result = `file:${changePath}`;
   } else {
     // 要素が相対パスで書かれている時
-    result = path.resolve(path.dirname(originalPath), changePath);
+    result = `file:${path.resolve(path.dirname(originalPath), changePath)}`;
   }
   return result;
 };

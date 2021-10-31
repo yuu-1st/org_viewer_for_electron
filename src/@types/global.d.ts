@@ -8,6 +8,7 @@ import {
   getDefaultData,
   getDirectoryList,
   ipcRendererOnShowLicenseList,
+  OpenHTML,
   pathChangeFromRelativeToAbsolute,
 } from '../preload';
 
@@ -20,6 +21,7 @@ export default interface Api {
   ipcRendererOnShowLicenseList: typeof ipcRendererOnShowLicenseList;
   FileOperating_CreateNewFile: typeof FileOperating_CreateNewFile;
   FileOperating_DeleteFile: typeof FileOperating_DeleteFile;
+  OpenHTML: typeof OpenHTML;
 }
 
 // global の名前空間にある定義を上書き
