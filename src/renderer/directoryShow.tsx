@@ -1,6 +1,6 @@
 import React from 'react';
 import { DirectoryData } from './../@types/connectionDataType';
-import { Button, ListGroup, ListGroupItem, Modal } from 'react-bootstrap';
+import { Button, ListGroup, ListGroupItem, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { BookOpen, Edit, Edit2, FilePlus, Folder, Tool, Trash2 } from 'react-feather';
 import { DeletePopup, ShowPopup, ShowTemporaryPopup } from './popup';
 
@@ -93,14 +93,28 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
                     /* orgファイルであれば編集ボタンと開くボタンを表示する */
                     return (
                       <>
-                        <Trash2
-                          className="mx-3"
-                          onClick={(e) => openDeleteFileModal(dirList.name, dirList.rootPath)}
-                        />
-                        <Edit2
-                          className="mx-3"
-                          onClick={(e) => ShowPopup('この機能は実装されていません。', ' ', 'danger')} // とりあえず。
-                        />
+                        <OverlayTrigger
+                          placement="top"
+                          delay={{ show: 500, hide: 0 }}
+                          overlay={<Tooltip>Delete File</Tooltip>}
+                        >
+                          <Trash2
+                            className="mx-3"
+                            onClick={(e) => openDeleteFileModal(dirList.name, dirList.rootPath)}
+                          />
+                        </OverlayTrigger>
+                        <OverlayTrigger
+                          placement="top"
+                          delay={{ show: 500, hide: 0 }}
+                          overlay={<Tooltip>Edit Filename</Tooltip>}
+                        >
+                          <Edit2
+                            className="mx-3"
+                            onClick={(e) =>
+                              ShowPopup('この機能は実装されていません。', ' ', 'danger')
+                            } // とりあえず。
+                          />
+                        </OverlayTrigger>
                       </>
                     );
                   }
@@ -109,14 +123,26 @@ class DirectoryShowListElement extends React.Component<DirectoryShowListElementP
                     /* orgファイルであれば編集ボタンと開くボタンを表示する */
                     return (
                       <>
-                        <Edit
-                          className="mx-3"
-                          onClick={(e) => this.openFile(dirList.rootPath, dirList.extension)}
-                        />{' '}
-                        <BookOpen
-                          className="mx-3"
-                          onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
-                        />
+                        <OverlayTrigger
+                          placement="top"
+                          delay={{ show: 500, hide: 0 }}
+                          overlay={<Tooltip>open editor</Tooltip>}
+                        >
+                          <Edit
+                            className="mx-3"
+                            onClick={(e) => this.openFile(dirList.rootPath, dirList.extension)}
+                          />
+                        </OverlayTrigger>
+                        <OverlayTrigger
+                          placement="top"
+                          delay={{ show: 500, hide: 0 }}
+                          overlay={<Tooltip>show</Tooltip>}
+                        >
+                          <BookOpen
+                            className="mx-3"
+                            onClick={(e) => this.openView(dirList.rootPath, dirList.extension)}
+                          />
+                        </OverlayTrigger>
                       </>
                     );
                   } else if (needTree) {
@@ -442,7 +468,8 @@ export class DirectoryShowDiv extends React.Component<
           <Modal.Body>
             <div className="text-danger">{ModalError}</div>
             <div className="m-1 flex-grow-1 d-flex flex-row">
-              「{ModalFileName}」を削除しますか？<br/>
+              「{ModalFileName}」を削除しますか？
+              <br />
               ※一度削除すると元に戻すことは出来ません。
             </div>
           </Modal.Body>
