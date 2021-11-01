@@ -61,6 +61,17 @@ my_helpをGUIで操作するアプリケーション
 
 # Versions
 
+## v0.6.0
+
+- add features
+  - Added the features to delete unnecessary files.
+  - Hover over the icon to see a description.
+
+- fix features
+  - The a tag can already open browsers and applications.
+  - Even if you scroll, it will be displayed from the beginning when you reopen it.
+  - Fixed an issue where the back button was not displayed when the path name was long.
+
 ## v0.5.0
 
 - changes
