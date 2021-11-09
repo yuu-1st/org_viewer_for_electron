@@ -194,88 +194,24 @@ interface FileOperationIconProps {
   isEditButtonDown: boolean;
 
   changeIsEditButtonDown: () => void;
-}
 
-interface FileOperationIconStates {
-  /** どのModal windowが開いているか。全て閉じている場合はnull */
-  isModalOpen: null | 'NewFile';
-  newFileName: string;
-  newModalError: string;
+  openNewFileModal: () => void;
 }
 
 /**
  * ファイル操作関係のアイコンを設置するコンポーネント
  */
-class FileOperationIcon extends React.Component<FileOperationIconProps, FileOperationIconStates> {
+class FileOperationIcon extends React.Component<FileOperationIconProps, {}> {
   /**
    * コンストラクタ。
    * @param props
    */
   constructor(props: FileOperationIconProps) {
     super(props);
-    this.state = {
-      isModalOpen: null,
-      newFileName: '',
-      newModalError: '',
-    };
   }
 
-  /**
-   * NewFileのModalを表示します
-   */
-  openNewFileModal = () => {
-    this.setState({ isModalOpen: 'NewFile', newFileName: '', newModalError: '' });
-  };
-
-  /**
-   * 全てのModal windowを閉じます
-   */
-  closeModal = () => {
-    this.setState({ isModalOpen: null });
-  };
-
-  /**
-   * NewFileのModalで、入力されたファイル名を取得/セットします。
-   * @param newFileName
-   */
-  handleNewFileModalInputOnChange = (newFileName: string) => {
-    this.setState({ newFileName });
-  };
-
-  /**
-   * NewFileのModalで、作成ボタンを押された時に、エラーもしくは成功を表示します。
-   */
-  handleNewFileModalOnCreateDown = async () => {
-    console.log('create');
-    const { directory, updateDirectoryShowObject } = this.props;
-    const { newFileName } = this.state;
-    let error = '';
-    if (newFileName.length === 0) {
-      error = 'ファイル名は1文字以上必要です';
-    } else {
-      const result = await window.api.FileOperating_CreateNewFile(newFileName, directory);
-      if (result.result === 'success') {
-        ShowPopup('ファイル作成に成功しました。', newFileName, 'success');
-        updateDirectoryShowObject(null, null, null);
-      } else {
-        if (result.data === 'already exist.') {
-          error = '該当のファイル名は既に存在しています。';
-        } else if (result.data === 'Contains characters that cannot be used.') {
-          error = 'ファイルに使用できない文字が含まれています。';
-        } else {
-          error = result.data;
-        }
-      }
-    }
-    if (error.length === 0) {
-      this.closeModal();
-    }
-    this.setState({ newModalError: error });
-  };
-
   render() {
-    const { changeIsEditButtonDown, isEditButtonDown } = this.props;
-    const { isModalOpen, newFileName, newModalError } = this.state;
+    const { changeIsEditButtonDown, isEditButtonDown, openNewFileModal } = this.props;
     // エディトボタンが押されているかどうかで条件分岐。する意味は果たしてあったのか
     if (isEditButtonDown) {
       return (
@@ -292,35 +228,10 @@ class FileOperationIcon extends React.Component<FileOperationIconProps, FileOper
       return (
         <>
           <div id="iconLists" className="d-flex flex-row my-3">
-            <div id="newFile" className="d-flex flex-row m-1" onClick={this.openNewFileModal}>
+            <div id="newFile" className="d-flex flex-row m-1" onClick={openNewFileModal}>
               <FilePlus className="me-1" />
               New File
             </div>
-            <Modal show={isModalOpen === 'NewFile'} onHide={this.closeModal}>
-              <Modal.Header closeButton>
-                <Modal.Title>新規ファイル作成</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <div className="text-danger">{newModalError}</div>
-                <div className="m-1 flex-grow-1 d-flex flex-row">
-                  <input
-                    className="flex-grow-1"
-                    type="text"
-                    value={newFileName}
-                    onChange={(e) => this.handleNewFileModalInputOnChange(e.target.value)}
-                  />
-                  <div className="m-1">.org</div>
-                </div>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={this.closeModal}>
-                  Close
-                </Button>
-                <Button variant="primary" onClick={this.handleNewFileModalOnCreateDown}>
-                  作成
-                </Button>
-              </Modal.Footer>
-            </Modal>
             <div id="editFile" className="d-flex flex-row m-1" onClick={changeIsEditButtonDown}>
               <Tool className="me-1" />
               Edit File
@@ -356,7 +267,7 @@ interface DirectoryShowDivState {
   /** 編集ボタンが押されているか */
   isEditButtonDown: boolean;
   /** どのModal windowが開いているか。全て閉じている場合はnull */
-  isModalOpen: null | 'EditFileName' | 'DeleteFile';
+  isModalOpen: null | 'NewFile' | 'EditFileName' | 'DeleteFile';
   ModalFileName: string;
   ModalFullPath: string;
   ModalError: string;
@@ -393,6 +304,13 @@ export class DirectoryShowDiv extends React.Component<
   };
 
   /**
+   * NewFileのModalを表示します
+   */
+  openNewFileModal = () => {
+    this.setState({ isModalOpen: 'NewFile', ModalFileName: '', ModalFullPath: '', ModalError: '' });
+  };
+
+  /**
    * DeleteFileのModalを表示します
    */
   openDeleteFileModal = (showFileName: string, deleteFullPath: string) => {
@@ -412,12 +330,43 @@ export class DirectoryShowDiv extends React.Component<
   };
 
   /**
-   * NewFileのModalで、入力されたファイル名を取得/セットします。
+   * Modalで、入力されたファイル名を取得/セットします。
    * @param newFileName
    */
-  // handleNewFileModalInputOnChange = (newFileName: string) => {
-  //   this.setState({ ModalFileName: newFileName });
-  // };
+  handleModalInputOnChange = (ModalFileName: string) => {
+    this.setState({ ModalFileName });
+  };
+
+  /**
+   * NewFileのModalで、作成ボタンを押された時に、エラーもしくは成功を表示します。
+   */
+  handleNewFileModalOnCreateDown = async () => {
+    console.log('create');
+    const { directory, updateDirectoryShowObject } = this.props;
+    const { ModalFileName } = this.state;
+    let error = '';
+    if (ModalFileName.length === 0) {
+      error = 'ファイル名は1文字以上必要です';
+    } else {
+      const result = await window.api.FileOperating_CreateNewFile(ModalFileName, directory);
+      if (result.result === 'success') {
+        ShowPopup('ファイル作成に成功しました。', ModalFileName, 'success');
+        updateDirectoryShowObject(null, null, null);
+      } else {
+        if (result.data === 'already exist.') {
+          error = '該当のファイル名は既に存在しています。';
+        } else if (result.data === 'Contains characters that cannot be used.') {
+          error = 'ファイルに使用できない文字が含まれています。';
+        } else {
+          error = result.data;
+        }
+      }
+    }
+    if (error.length === 0) {
+      this.closeModal();
+    }
+    this.setState({ ModalError: error });
+  };
 
   handleDeleteButtonDown = async () => {
     const { updateDirectoryShowObject } = this.props;
@@ -453,6 +402,7 @@ export class DirectoryShowDiv extends React.Component<
           updateDirectoryShowObject={updateDirectoryShowObject}
           isEditButtonDown={isEditButtonDown}
           changeIsEditButtonDown={this.changeIsEditButtonDown}
+          openNewFileModal={this.openNewFileModal}
         />
         <DirectoryShowListElement
           dirLists={dirLists}
@@ -461,6 +411,7 @@ export class DirectoryShowDiv extends React.Component<
           isEditButtonDown={isEditButtonDown}
           openDeleteFileModal={this.openDeleteFileModal}
         />
+        {/* 削除ファイルモーダルウィンドウ */}
         <Modal show={isModalOpen === 'DeleteFile'} onHide={this.closeModal}>
           <Modal.Header closeButton>
             <Modal.Title>ファイル削除</Modal.Title>
@@ -482,7 +433,35 @@ export class DirectoryShowDiv extends React.Component<
             </Button>
           </Modal.Footer>
         </Modal>
-      </div>
+        {/* 削除ファイルモーダルウィンドウここまで */}
+        {/* 新規ファイルモーダルウィンドウ */}
+        <Modal show={isModalOpen === 'NewFile'} onHide={this.closeModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>新規ファイル作成</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="text-danger">{ModalError}</div>
+            <div className="m-1 flex-grow-1 d-flex flex-row">
+              <input
+                className="flex-grow-1"
+                type="text"
+                value={ModalFileName}
+                onChange={(e) => this.handleModalInputOnChange(e.target.value)}
+              />
+              <div className="m-1">.org</div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={this.closeModal}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={this.handleNewFileModalOnCreateDown}>
+              作成
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        {/* 新規ファイルモーダルウィンドウここまで */}
+        </div>
     );
   }
 }
