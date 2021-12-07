@@ -3,6 +3,7 @@ import { shell } from 'electron';
 import fs from 'fs';
 // import { stderr } from 'process';
 import { ApiResultData } from '../@types/connectionDataType';
+import DataStore from './DataStore';
 import { ExecPathEscape } from './ExecPathEscape';
 
 /**
@@ -20,7 +21,7 @@ export const FileOpenToEmacs = async (
     if (fs.existsSync(dirPath)) {
       // exec('arch -arch x86_64 /bin/bash -c "/Applications/Emacs.app/Contents/MacOS/Emacs ' + ExecPathEscape(`"${ExecPathEscape(dirPath)}"`) + '"', (err, stdout, stderr) => {
       exec(
-        `/Applications/Emacs.app/Contents/MacOS/Emacs "${ExecPathEscape(dirPath)}"`,
+        `${DataStore.getEmacsPath()} "${ExecPathEscape(dirPath)}"`,
         (err, stdout, stderr) => {
           if (err) {
             console.log(err.message);

@@ -4,6 +4,7 @@ import { exec } from 'child_process';
 import { ExecPathEscape } from './ExecPathEscape';
 import { app } from 'electron';
 import path from 'path';
+import DataStore from './DataStore';
 
 /**
  * orgファイルをpandocを経由してHTML形式に変更します。
@@ -23,7 +24,7 @@ export const FileChangeFromOrgToHTML = async (
         setPandocLuaFilter();
       }
       exec(
-        `/usr/local/bin/pandoc --lua-filter "${ExecPathEscape(
+        `${DataStore.getPandocPath()} --lua-filter "${ExecPathEscape(
           getPandocLuaFilterPath()
         )}" -f org -t html "${ExecPathEscape(dirPath)}"`,
         (err, stdout, stderr) => {
