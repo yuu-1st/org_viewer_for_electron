@@ -24,7 +24,7 @@ export function HTMLCreateTableOfContents(dom: Document): HTMLDivElement {
       let a = document.createElement('a');
 
       // 追加する<ul><li><a>タイトル</a></li></ul>を準備する
-      a.innerHTML = value.textContent ?? '';
+      a.textContent = value.textContent ?? '';
       a.href = '#' + value.id;
       li.appendChild(a);
       ul.appendChild(li);
@@ -52,7 +52,7 @@ export function HTMLCreateTableOfContents(dom: Document): HTMLDivElement {
       lastLi = lastUl.lastElementChild;
 
       // 追加する<ul><li><a>タイトル</a></li></ul>を準備する
-      a.innerHTML = value.textContent ?? '';
+      a.textContent = value.textContent ?? '';
       a.href = '#' + value.id;
       li.appendChild(a);
       ul.appendChild(li);
@@ -89,7 +89,7 @@ export function HTMLCreateTableOfContents(dom: Document): HTMLDivElement {
       let last2Li = last2Ul?.lastElementChild;
 
       // 追加する<ul><li><a>タイトル</a></li></ul>を準備する
-      a.innerHTML = value.textContent ?? '';
+      a.textContent = value.textContent ?? '';
       a.href = '#' + value.id;
       li.appendChild(a);
       ul.appendChild(li);
