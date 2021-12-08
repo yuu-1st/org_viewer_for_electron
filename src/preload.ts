@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { ApiResultData, DefaultData, DirectoryData } from './@types/connectionDataType';
+import { ApiResultData, DefaultData, DirectoryData, SettingsDataList } from './@types/connectionDataType';
 
 export const preloadObject = {
   /**
@@ -109,11 +109,40 @@ export const preloadObject = {
   },
 
   /**
-   * メインプロセスから呼び出した時に呼び出す関数を登録する関数
+   * 設定を読み込みます
+   * @returns
+   */
+  getSettings: async (): Promise<SettingsDataList> => {
+    const Message: SettingsDataList = await ipcRenderer.invoke('getSettings');
+    return Message;
+  },
+
+  /**
+   * 設定を保存します
+   * @param settings
+   * @returns
+   */
+  setSettings: async (settings: SettingsDataList): Promise<ApiResultData> => {
+    const Message: ApiResultData = await ipcRenderer.invoke('setSettings', settings);
+    return Message;
+  },
+
+  /**
+   * メインプロセスから呼び出した時に呼び出す関数を登録する関数 - LicenseList
    * @param callback
    */
   ipcRendererOnShowLicenseList: (callback: (text: string) => void): void => {
     ipcRenderer.on('showLicenseList', (event, text) => {
+      callback(text);
+    });
+  },
+
+  /**
+   * メインプロセスから呼び出した時に呼び出す関数を登録する関数 - Settings
+   * @param callback
+   */
+  ipcRendererOnShowSettings: (callback: (text: string) => void): void => {
+    ipcRenderer.on('showSettings', (event, text) => {
       callback(text);
     });
   },

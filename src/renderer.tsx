@@ -15,10 +15,11 @@ import { HTMLCreateTableOfContents } from './renderer/object/HTMLCreateTableOfCo
 import { HtmlLinkToAbsolutePath } from './renderer/object/HtmlLinkToAbsolutePath';
 import { DefaultData, DirectoryData } from './@types/connectionDataType';
 import { ShowPopup } from './renderer/popup';
+import { HtmlSettings } from './renderer/settings';
 
 interface RootDivState {
   /** 現在表示している場所 */
-  showDiv: 'Directory' | 'Html';
+  showDiv: 'Directory' | 'Html' | 'Setting';
 
   /** htmlShow のデータ */
   htmlShowObject: {
@@ -62,6 +63,7 @@ class RootDiv extends React.Component<{}, RootDivState> {
     };
     this.setDefaultData();
     window.api.ipcRendererOnShowLicenseList(this.showLicenseList);
+    window.api.ipcRendererOnShowSettings(this.showSettings);
   }
 
   /**
@@ -104,6 +106,16 @@ class RootDiv extends React.Component<{}, RootDivState> {
    */
   showLicenseList = (text: string) => {
     this.changeDivToHtml(text, '');
+  };
+
+  /**
+   * 設定を表示します
+   * @param text
+   */
+  showSettings = (text: string) => {
+    this.setState({
+      showDiv: 'Setting',
+    });
   };
 
   /**
@@ -202,6 +214,9 @@ class RootDiv extends React.Component<{}, RootDivState> {
                 html={htmlShowObject.Body}
                 tableOfContents={htmlShowObject.TableOfContents}
               />
+            </div>
+            <div id="settings" style={showDiv !== 'Setting' ? hiddenStyle : {}}>
+              <HtmlSettings />
             </div>
           </div>
         </div>

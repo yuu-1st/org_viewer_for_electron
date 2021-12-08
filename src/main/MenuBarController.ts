@@ -10,6 +10,13 @@ function CreateMenuBar(mainWindow: BrowserWindow) {
       submenu: [
         { role: 'about' },
         { type: 'separator' },
+        {
+          label: 'Preferences',
+          click: async () => {
+            mainWindow.webContents.send('showSettings', LicenseList);
+          },
+        },
+        { type: 'separator' },
         { role: 'services' },
         { type: 'separator' },
         { role: 'hide' },

@@ -9,6 +9,7 @@ import { GetDefaultData } from './main/GetDefaultData';
 import { UpdateMenuBar } from './main/MenuBarController';
 import { FileOperating_CreateNewFile, FileOperating_DeleteFile } from './main/FileOperating';
 import { OpenHTML } from './main/OpenHTML';
+import { getSettingsData, setSettingsData } from './main/SettingsOperating';
 
 const extPath =
   os.platform() === 'darwin'
@@ -120,3 +121,13 @@ ipcMain.handle('FileOperating_DeleteFile', FileOperating_DeleteFile);
  * Linkを開きます。
  */
 ipcMain.handle('OpenHTML', OpenHTML);
+
+/**
+ * 設定を取得します。
+ */
+ipcMain.handle('getSettings', getSettingsData);
+
+/**
+ * 設定を保存します。
+ */
+ipcMain.handle('setSettings', setSettingsData);

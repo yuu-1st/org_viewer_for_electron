@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowLeft } from 'react-feather';
 
 interface OverMenuBarProps {
-  type: 'Directory' | 'Html';
+  type: 'Directory' | 'Html' | 'Setting';
   changeDivToDirectory: () => void;
   handleOnlyDirNameChange: (dirName: string) => void;
   updateDirectoryShowObject: (
@@ -153,6 +153,11 @@ export class OverMenuBar extends React.Component<OverMenuBarProps, OverMenuBarSt
                   <option value="3">With dot files</option>
                 </select>
               </div>
+            </>
+          )}
+          {type === 'Setting' && (
+            <>
+              <ArrowLeft style={{ height: '25px' }} onClick={changeDivToDirectory} />
             </>
           )}
         </div>

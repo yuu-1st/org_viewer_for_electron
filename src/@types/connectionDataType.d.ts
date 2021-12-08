@@ -15,3 +15,8 @@ export interface ApiResultData {
     result : 'success' | 'error';
     data : string;
 }
+
+export interface SettingsDataList {
+  emacsPath: string;
+  pandocPath: string;
+}
