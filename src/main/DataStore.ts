@@ -46,6 +46,28 @@ const DataStore = {
   setPandocPath: (path: string) => {
     store.set('pandocPath', path);
   },
+
+  /**
+   * 著者名を取得する
+   */
+  getAuthor: (): string => {
+    const defaultAuthor = 'Your Name';
+    const get = store.get('author', defaultAuthor);
+    if (typeof get === 'string') {
+      return get;
+    } else {
+      return defaultAuthor;
+    }
+  },
+
+  /**
+   * 著者名を設定する
+   * @param {string} author 著者名
+   * @returns {void}
+   */
+  setAuthor: (author: string) => {
+    store.set('author', author);
+  },
 };
 
 export default DataStore;

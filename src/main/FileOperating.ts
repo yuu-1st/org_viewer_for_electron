@@ -1,18 +1,21 @@
 import fs from 'fs';
 import path from 'path';
 import { ApiResultData } from '../@types/connectionDataType';
+import DataStore from './DataStore';
 
 /**
  * orgファイルを新規作成します。
  * @param event
  * @param filename ファイル名
  * @param directory ディレクトリ名
+ * @param ModalExplainText ファイル説明
  * @returns
  */
 export const FileOperating_CreateNewFile = (
   event: Electron.IpcMainInvokeEvent,
   filename: string,
-  directory: string
+  directory: string,
+  ModalExplainText: string,
 ): ApiResultData => {
   if (!/^[^\\/:\*\?\"<>\|]+$/.test(filename)) {
     return {
@@ -22,7 +25,15 @@ export const FileOperating_CreateNewFile = (
   }
   const fullPath = path.join(directory, `${filename}.org`);
   if (!fs.existsSync(fullPath)) {
-    fs.closeSync(fs.openSync(fullPath, 'w'));
+    const text = `#+STARTUP: indent nolineimages
+* head
+- ${ModalExplainText}
+* license
+-      cc by ${DataStore.getAuthor()}, ${new Date().getFullYear()}
+* item_example
+- itemの例
+`;
+    fs.writeFileSync(fullPath, text);
     return {
       result: 'success',
       data: '',

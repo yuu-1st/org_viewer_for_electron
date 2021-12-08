@@ -13,6 +13,7 @@ export class HtmlSettings extends React.Component<{}, SettingsState> {
       settings: {
         emacsPath: '',
         pandocPath: '',
+        author: '',
       },
     };
     this.loadSettings();
@@ -23,6 +24,7 @@ export class HtmlSettings extends React.Component<{}, SettingsState> {
    */
   loadSettings = async () => {
     const settings = await window.api.getSettings();
+    console.log(settings);
     this.setState({
       settings: settings,
     });
@@ -39,6 +41,14 @@ export class HtmlSettings extends React.Component<{}, SettingsState> {
   handlePathToPandocChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { settings } = this.state;
     settings.pandocPath = e.target.value;
+    this.setState({
+      settings,
+    });
+  };
+
+  handleAuthorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { settings } = this.state;
+    settings.author = e.target.value;
     this.setState({
       settings,
     });
@@ -61,6 +71,16 @@ export class HtmlSettings extends React.Component<{}, SettingsState> {
       <div className="m-1">
         <h2>設定</h2>
         <div className="form-group">
+          <div className="m-1">
+            <label htmlFor="html-title">著者名(新規ファイル作成時に記述されます。)</label>
+            <input
+              type="text"
+              className="form-control"
+              id="author"
+              value={settings.author}
+              onChange={this.handleAuthorChange}
+            />
+          </div>
           <div className="m-1">
             <label htmlFor="html-title">Emacsのパス</label>
             <input

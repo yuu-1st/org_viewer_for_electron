@@ -30,12 +30,14 @@ export const preloadObject = {
    */
   FileOperating_CreateNewFile: async (
     filename: string,
-    directory: string
+    directory: string,
+    ModalExplainText: string,
   ): Promise<ApiResultData> => {
     const Message: ApiResultData = await ipcRenderer.invoke(
       'FileOperating_CreateNewFile',
       filename,
-      directory
+      directory,
+      ModalExplainText,
     );
     return Message;
   },

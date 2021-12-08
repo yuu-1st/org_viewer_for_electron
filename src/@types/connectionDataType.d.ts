@@ -19,4 +19,5 @@ export interface ApiResultData {
 export interface SettingsDataList {
   emacsPath: string;
   pandocPath: string;
+  author: string;
 }

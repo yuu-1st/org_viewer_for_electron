@@ -9,6 +9,7 @@ export const getSettingsData = (): SettingsDataList => {
   const settingsData: SettingsDataList = {
     emacsPath: DataStore.getEmacsPath(),
     pandocPath: DataStore.getPandocPath(),
+    author: DataStore.getAuthor(),
   };
   return settingsData;
 };
@@ -39,6 +40,7 @@ export const setSettingsData = (
 
   DataStore.setEmacsPath(settingsData.emacsPath);
   DataStore.setPandocPath(settingsData.pandocPath);
+  DataStore.setAuthor(settingsData.author);
   return {
     result: 'success',
     data: '',

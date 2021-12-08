@@ -271,6 +271,7 @@ interface DirectoryShowDivState {
   ModalFileName: string;
   ModalFullPath: string;
   ModalError: string;
+  ModalExplainText: string;
 }
 
 /**
@@ -292,6 +293,7 @@ export class DirectoryShowDiv extends React.Component<
       ModalFileName: '',
       ModalFullPath: '',
       ModalError: '',
+      ModalExplainText: '',
     };
   }
 
@@ -307,7 +309,13 @@ export class DirectoryShowDiv extends React.Component<
    * NewFileのModalを表示します
    */
   openNewFileModal = () => {
-    this.setState({ isModalOpen: 'NewFile', ModalFileName: '', ModalFullPath: '', ModalError: '' });
+    this.setState({
+      isModalOpen: 'NewFile',
+      ModalFileName: '',
+      ModalFullPath: '',
+      ModalError: '',
+      ModalExplainText: '',
+    });
   };
 
   /**
@@ -338,17 +346,29 @@ export class DirectoryShowDiv extends React.Component<
   };
 
   /**
+   * Modalで、入力されたファイル名を取得/セットします。
+   * @param ModalExplainText
+   */
+  handleModalInputExplainOnChange = (ModalExplainText: string) => {
+    this.setState({ ModalExplainText });
+  };
+
+  /**
    * NewFileのModalで、作成ボタンを押された時に、エラーもしくは成功を表示します。
    */
   handleNewFileModalOnCreateDown = async () => {
     console.log('create');
     const { directory, updateDirectoryShowObject } = this.props;
-    const { ModalFileName } = this.state;
+    const { ModalFileName, ModalExplainText } = this.state;
     let error = '';
     if (ModalFileName.length === 0) {
       error = 'ファイル名は1文字以上必要です';
     } else {
-      const result = await window.api.FileOperating_CreateNewFile(ModalFileName, directory);
+      const result = await window.api.FileOperating_CreateNewFile(
+        ModalFileName,
+        directory,
+        ModalExplainText
+      );
       if (result.result === 'success') {
         ShowPopup('ファイル作成に成功しました。', ModalFileName, 'success');
         updateDirectoryShowObject(null, null, null);
@@ -393,7 +413,8 @@ export class DirectoryShowDiv extends React.Component<
       directory,
       updateDirectoryShowObject,
     } = this.props;
-    const { isEditButtonDown, isModalOpen, ModalFileName, ModalError } = this.state;
+    const { isEditButtonDown, isModalOpen, ModalFileName, ModalError, ModalExplainText } =
+      this.state;
 
     return (
       <div>
@@ -450,6 +471,15 @@ export class DirectoryShowDiv extends React.Component<
               />
               <div className="m-1">.org</div>
             </div>
+            <div className="">ファイル説明</div>
+            <div className="m-1 flex-grow-1 d-flex flex-row">
+              <input
+                className="flex-grow-1"
+                type="text"
+                value={ModalExplainText}
+                onChange={(e) => this.handleModalInputExplainOnChange(e.target.value)}
+              />
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={this.closeModal}>
@@ -461,7 +491,7 @@ export class DirectoryShowDiv extends React.Component<
           </Modal.Footer>
         </Modal>
         {/* 新規ファイルモーダルウィンドウここまで */}
-        </div>
+      </div>
     );
   }
 }
