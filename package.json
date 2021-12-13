@@ -1,6 +1,6 @@
 {
   "name": "org_viewer_for_electron",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "use org_mode for GUI",
   "main": "dist/main.js",
   "scripts": {
