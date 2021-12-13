@@ -14,7 +14,7 @@ my_helpをGUIで操作するアプリケーション
 
 - 表示したいorgファイルの表示ボタンを選択すると、開きます。
 
-# Settings
+# External Application Settings
 
 このアプリケーションを使用する場合、以下の前提アプリケーションが必要になります。
 事前にインストールしてください。
@@ -60,6 +60,15 @@ my_helpをGUIで操作するアプリケーション
 
 
 # Versions
+
+## v0.7.0
+
+- add features
+  - You can now specify Emacs and Pandoc paths. It can be set from "Preference".
+  - The org file generation contains the default string, not an empty file.
+
+- others
+  - Made some code fixes.
 
 ## v0.6.0
 
