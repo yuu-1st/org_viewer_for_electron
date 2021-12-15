@@ -1,10 +1,8 @@
-import { exec, spawn } from 'child_process';
-import { shell } from 'electron';
+import { exec } from 'child_process';
 import fs from 'fs';
-// import { stderr } from 'process';
 import { ApiResultData } from '../@types/connectionDataType';
-import DataStore from './DataStore';
 import { ExecPathEscape } from './ExecPathEscape';
+import { getSettingsEmacsPath } from './SettingsOperating';
 
 /**
  * orgファイルをGUI版Emacsで開きます。
@@ -21,7 +19,7 @@ export const FileOpenToEmacs = async (
     if (fs.existsSync(dirPath)) {
       // exec('arch -arch x86_64 /bin/bash -c "/Applications/Emacs.app/Contents/MacOS/Emacs ' + ExecPathEscape(`"${ExecPathEscape(dirPath)}"`) + '"', (err, stdout, stderr) => {
       exec(
-        `${DataStore.getEmacsPath()} "${ExecPathEscape(dirPath)}"`,
+        `"${ExecPathEscape(getSettingsEmacsPath())}" "${ExecPathEscape(dirPath)}"`,
         (err, stdout, stderr) => {
           if (err) {
             console.log(err.message);

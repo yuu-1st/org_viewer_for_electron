@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { ApiResultData } from '../@types/connectionDataType';
-import DataStore from './DataStore';
+import { getSettingsAuthor } from './SettingsOperating';
 
 /**
  * orgファイルを新規作成します。
@@ -15,7 +15,7 @@ export const FileOperating_CreateNewFile = (
   event: Electron.IpcMainInvokeEvent,
   filename: string,
   directory: string,
-  ModalExplainText: string,
+  ModalExplainText: string
 ): ApiResultData => {
   if (!/^[^\\/:\*\?\"<>\|]+$/.test(filename)) {
     return {
@@ -29,7 +29,7 @@ export const FileOperating_CreateNewFile = (
 * head
 - ${ModalExplainText}
 * license
--      cc by ${DataStore.getAuthor()}, ${new Date().getFullYear()}
+-      cc by ${getSettingsAuthor()}, ${new Date().getFullYear()}
 * item_example
 - itemの例
 `;
@@ -64,6 +64,47 @@ export const FileOperating_DeleteFile = (
   if (fs.existsSync(fullPath)) {
     try {
       fs.unlinkSync(fullPath);
+    } catch (e) {
+      return {
+        result: 'error',
+        data: 'exception',
+      };
+    }
+    return {
+      result: 'success',
+      data: '',
+    };
+  }
+  return {
+    result: 'error',
+    data: 'already deleted.',
+  };
+};
+
+/**
+ * 指定されたファイル名に変更する
+ * @param event
+ * @param directoryPath 変更するファイルが存在しているディレクトリのフルパス
+ * @param changeFileFullPath 変更するファイルのフルパス
+ * @param newFilename あたらしいファイル名
+ * @returns void
+ */
+export const FileOperating_RenameFile = (
+  event: Electron.IpcMainInvokeEvent,
+  directoryPath: string,
+  changeFileFullPath: string,
+  newFilename: string
+): ApiResultData => {
+  if (!/^[^\\/:\*\?\"<>\|]+$/.test(newFilename)) {
+    return {
+      result: 'error',
+      data: 'Contains characters that cannot be used.',
+    };
+  }
+  const newFileFullPath = path.join(directoryPath, `${newFilename}.org`);
+  if (fs.existsSync(changeFileFullPath)) {
+    try {
+      fs.renameSync(changeFileFullPath, newFileFullPath);
     } catch (e) {
       return {
         result: 'error',

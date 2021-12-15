@@ -11,12 +11,11 @@ const DataStore = {
    * @returns {string} Emacsのパス
    */
   getEmacsPath: (): string => {
-    const defaultPath = '/Applications/Emacs.app/Contents/MacOS/Emacs';
-    const get = store.get('emacsPath', defaultPath);
+    const get = store.get('emacsPath', '');
     if (typeof get === 'string') {
       return get;
     } else {
-      return defaultPath;
+      return '';
     }
   },
 
@@ -31,12 +30,11 @@ const DataStore = {
    * Pandocのパスを取得する
    */
   getPandocPath: (): string => {
-    const defaultPath = '/usr/local/bin/pandoc';
-    const get = store.get('pandocPath', defaultPath);
+    const get = store.get('pandocPath', '');
     if (typeof get === 'string') {
       return get;
     } else {
-      return defaultPath;
+      return '';
     }
   },
 
@@ -51,12 +49,11 @@ const DataStore = {
    * 著者名を取得する
    */
   getAuthor: (): string => {
-    const defaultAuthor = 'Your Name';
-    const get = store.get('author', defaultAuthor);
+    const get = store.get('author', '');
     if (typeof get === 'string') {
       return get;
     } else {
-      return defaultAuthor;
+      return '';
     }
   },
 
