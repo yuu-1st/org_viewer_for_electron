@@ -61,6 +61,11 @@ my_helpをGUIで操作するアプリケーション
 
 # Versions
 
+## v0.8.0
+
+- others
+  - Made some code fixes.
+
 ## v0.7.0
 
 - add features
