@@ -4,7 +4,8 @@ import DataStore from './DataStore';
 /**
  * Emacsのパスの条件の正規表現
  */
-const EmacsPathRegExp = /(^emacs|\/emacs)$/i;
+// const EmacsPathRegExp = /(^emacs|\/emacs)$/i;
+const EmacsPathRegExp = /.*/; // emacsに限定しなくても良いのでは？
 
 /**
  * Pandocのパスの条件の正規表現
