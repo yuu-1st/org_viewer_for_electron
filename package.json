@@ -11,8 +11,10 @@
     "serve": "electron .",
     "product_build": "cross-env NODE_ENV=\"production\" webpack --progress --mode=production",
     "product_package_mac": "electron-builder --mac --universal",
+    "product_package_win": "electron-builder --win --x64",
     "product_clean": "rimraf build_dist",
-    "packaged_for_mac": "run-s clean product_clean make_license product_build product_package_mac"
+    "packaged_for_mac": "run-s clean product_clean make_license product_build product_package_mac",
+    "packaged_for_win": "run-s clean product_clean make_license product_build product_package_win"
   },
   "keywords": [],
   "author": "",
