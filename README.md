@@ -41,7 +41,7 @@ my_helpをGUIで操作するアプリケーション
 
 ## use windows
 
-- 現在、windows版には対応していません。
+- 現在、windows版にはテストバージョンのみ公開しており、十分な設定は提示されません。
 
 # Install
 
@@ -60,6 +60,19 @@ my_helpをGUIで操作するアプリケーション
 
 
 # Versions
+
+## v0.9.0
+
+- for windows
+  - The exe file has been released.
+  - However, we haven't tested it to work, so we need to get feedback.
+
+- changes
+  - You can now select and open an editor other than Emacs.
+  - Change the template when creating a file.
+
+- others
+  - Fix security error.
 
 ## v0.8.1
 
