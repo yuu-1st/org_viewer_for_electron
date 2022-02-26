@@ -4,6 +4,12 @@ import { LicenseList } from '../LicenseList';
 const isMac = process.platform === 'darwin';
 
 function CreateMenuBar(mainWindow: BrowserWindow) {
+  /**
+   * メニューバーの設定
+   */
+  const template: Electron.MenuItemConstructorOptions[] = [];
+
+  // { role: 'appMenu' }
   const macMenu: Electron.MenuItemConstructorOptions[] = [
     {
       label: app.name,
@@ -25,12 +31,27 @@ function CreateMenuBar(mainWindow: BrowserWindow) {
       ],
     },
   ];
+  const winMenu: Electron.MenuItemConstructorOptions[] = [
+    {
+      label: app.name,
+      submenu: [
+        {
+          label: 'Preferences',
+          click: async () => {
+            mainWindow.webContents.send('showSettings', LicenseList);
+          },
+        },
+        { role: 'close' },
+      ],
+    },
+  ];
 
-  const template: Electron.MenuItemConstructorOptions[] = [];
   if (isMac) {
-    // { role: 'appMenu' }
     template.push(...macMenu);
+  } else {
+    template.push(...winMenu);
   }
+
   // { role: 'fileMenu' }
   template.push({
     label: 'ファイル',
