@@ -61,6 +61,11 @@ my_helpをGUIで操作するアプリケーション
 
 # Versions
 
+## v0.9.1
+
+- fix
+  - Fixed so that setting items are displayed in the menu bar of windows.
+
 ## v0.9.0
 
 - for windows
