@@ -26,6 +26,8 @@ export const FileOperating_CreateNewFile = (
   const fullPath = path.join(directory, `${filename}.org`);
   if (!fs.existsSync(fullPath)) {
     const text = `#+STARTUP: indent nolineimages
+#+OPTIONS: ^:{}
+
 * head
 - ${ModalExplainText}
 * license
