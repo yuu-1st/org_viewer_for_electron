@@ -61,6 +61,10 @@ my_helpをGUIで操作するアプリケーション
 
 # Versions
 
+## v0.9.2
+
+- Security Update.
+
 ## v0.9.1
 
 - fix
